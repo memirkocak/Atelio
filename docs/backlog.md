@@ -25,10 +25,11 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 
 | ID | Tâche | Statut |
 |---|---|---|
-| B-020 | Layout applicatif : sidebar (navigation des modules), topbar, menu mobile | ⚪ |
-| B-021 | Composants partagés : PageHeader, EmptyState, StatusBadge | ⚪ |
-| B-022 | Pages vides des modules (coquilles) sous `/w/[slug]/…` | ⚪ |
-| B-023 | Page d'accueil publique (présentation + futur bouton démo) | ⚪ |
+| B-019 | Tokens de design : palette, statuts, graphiques, rayon, densité | ✅ |
+| B-020 | Layout applicatif : sidebar (navigation des modules), topbar, menu mobile | ✅ |
+| B-021 | Composants partagés : PageHeader, EmptyState, StatusBadge, PageContainer | ✅ |
+| B-022 | Pages vides des modules (coquilles) sous `/w/[slug]/…`, 404 et page d'erreur | ✅ |
+| B-023 | Page d'accueil publique, version simple (boutons d'accès ajoutés en phases 3 et 12) | ✅ |
 
 ## Phase 3 — Authentification
 

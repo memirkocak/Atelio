@@ -113,3 +113,22 @@ _13/11/2026 — acceptée temporairement_
 - Elles ne concernent que des **outils de développement**, jamais exécutés dans le navigateur ni en production. `npm audit fix --force` rétrograderait shadcn en 1.0.0 (cassant) : non appliqué.
 - **Action** : revérifier à chaque mise à jour des dépendances.
 - Note : ESLint 9 est signalé « plus supporté » par npm ; il reste requis par `eslint-config-next` 16.4 (DT-004). Passer à ESLint 10 dès que l'écosystème le permet.
+
+### DT-017 — Design system V1
+_13/11/2026 — validée_
+
+- **Mode clair uniquement** en V1 (bloc `.dark` retiré). La variante `dark` reste déclarée pour que les classes des composants shadcn compilent ; un mode sombre pourra être ajouté en redéfinissant les tokens.
+- **Palette** (`src/app/globals.css`) : neutres légèrement bleutés (teinte 265), fond d'application `canvas` #F8F9FB, surfaces blanches, `primary` indigo-600, `info` blue-600, rayon 8 px.
+- **Tokens de statut** `status-{neutral,info,progress,warning,success,danger}` (+ `-foreground`), utilisés via `StatusBadge`. Correspondance : brouillon / à venir / annulé → neutral ; envoyé → info ; en cours → progress ; en attente / expiré → warning ; terminé / accepté → success ; en retard / refusé → danger.
+- **Densité compacte** : texte de base 14 px, titres de page 24 px.
+- Animations désactivées si `prefers-reduced-motion`.
+
+### DT-018 — Coquille applicative et cacheComponents
+_13/11/2026 — validée_
+
+- Navigation définie une seule fois dans `src/components/layout/navigation.ts`.
+- Sidebar shadcn (`collapsible="icon"`) : dépliée à partir de 1280 px, en icônes en dessous, panneau latéral sous 768 px. Le choix manuel de l'utilisateur prime pendant la session (non persisté ; le cookie shadcn n'est pas lu côté serveur pour garder la coquille statique).
+- Avec `cacheComponents`, les composants lisant l'URL (`useParams`, `usePathname`) sont dans des frontières `<Suspense>` ; les pages des modules sont pré-rendues partiellement (◐ au build). Le layout `/w/[slug]` ne lit pas `params`.
+- `/w/<slug>` redirige vers `/w/<slug>/tableau-de-bord` (redirection `next.config.ts`).
+- Composants shadcn retouchés : libellés d'accessibilité traduits (sidebar, sheet, breadcrumb) ; `use-mobile.ts` réécrit sur `useMediaQuery` et largeur de `SidebarMenuSkeleton` rendue déterministe (règles `react-hooks` de React 19).
+- **Temporaire** : les pages `/w/[slug]/…` sont accessibles sans connexion (local uniquement) jusqu'aux phases 3 et 4.

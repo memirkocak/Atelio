@@ -3,8 +3,10 @@
 ## État actuel
 
 - **Phase 0 — Cadrage** : terminée (dépôt GitHub en attente, B-010).
-- **Phase 1 — Initialisation** : terminée. L'application démarre ; `typecheck`, `lint`, tests unitaires, build et test E2E sont au vert.
-- Aucune fonctionnalité métier, aucune connexion Supabase pour l'instant.
+- **Phase 1 — Initialisation** : terminée.
+- **Phase 2 — Design global** : terminée. Coquille navigable (sidebar, topbar, menu mobile), 8 pages de modules vides, page d'accueil simple, 404 et page d'erreur.
+- Aucune fonctionnalité métier, aucune connexion Supabase pour l'instant. Les pages `/w/<espace>/…` sont accessibles sans connexion (local uniquement) jusqu'aux phases 3-4.
+- Aperçu local : `npm run dev` puis http://localhost:3000/w/demo/tableau-de-bord
 
 ## Historique des sessions
 
@@ -44,6 +46,25 @@
 - `cacheComponents` activé par défaut : impact à valider lors de l'authentification (DT-015).
 - ESLint 9 marqué « plus supporté » par npm mais requis par eslint-config-next (DT-004, DT-016).
 
+#### Tâche 3 — Design global (phase 2)
+- Tokens de design dans `globals.css` : neutres bleutés, fond `canvas`, indigo / bleu, 6 tonalités de statut, 5 couleurs de graphiques, rayon 8 px, texte 14 px, mode clair uniquement, `prefers-reduced-motion`.
+- Composants shadcn ajoutés : sidebar, sheet, tooltip, separator, skeleton, input, breadcrumb, card, badge (libellés d'accessibilité traduits).
+- Layout : `navigation.ts` (source unique), `AppShell`, `AppSidebar`, `AppTopbar`, `Brand`, `PageContainer`, `ModulePlaceholder` ; hook `useMediaQuery`.
+- Composants partagés : `PageHeader`, `EmptyState`, `StatusBadge`.
+- Pages : 8 modules sous `/w/[slug]/`, redirection `/w/<slug>` → tableau de bord, `not-found.tsx`, `error.tsx`, page d'accueil simple.
+- Correctifs : composants qui lisent l'URL placés dans `<Suspense>` (exigé par cacheComponents au build) ; `use-mobile.ts` et `SidebarMenuSkeleton` corrigés pour les règles `react-hooks`.
+- Décisions DT-017 et DT-018.
+
+**Vérifications (tâche 3)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` | ✅ |
+| `npm run lint` | ✅ (après correction de 2 erreurs dans du code shadcn généré) |
+| `npm test` | ✅ 8/8 (navigation, StatusBadge, cn) |
+| `npm run build` | ✅ (après mise en `<Suspense>` de la lecture d'URL) |
+| `npm run test:e2e` | ✅ 7/7 : redirection, navigation des 8 modules + page active + titres, sidebar repliable, tablette repliée par défaut, menu mobile, accueil, 404 |
+| Navigateur | ✅ 1440, 1024 et 375 px, pas de défilement horizontal, aucune erreur console |
+
 ## Prochaine étape
 
-**Phase 2 — Design global (B-020 à B-023)** : définir la palette et la typographie, construire le layout applicatif (sidebar, topbar, menu mobile), les composants partagés, les coquilles des pages des modules et la page d'accueil publique. À présenter en détail avant exécution.
+**Phase 3 — Authentification (B-030 à B-034)** : création guidée des projets Supabase `atelio-dev` et `atelio-prod`, configuration de la CLI, clients Supabase, `proxy.ts`, pages connexion / inscription / mot de passe oublié, tests E2E. Nécessite des actions de l'utilisateur (création des projets, saisie des clés). À présenter en détail avant exécution.

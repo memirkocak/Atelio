@@ -86,6 +86,7 @@ atelio/
 │  │  ├─ auth/ workspaces/ dashboard/ clients/ projects/ tasks/
 │  │  ├─ quotes/ (calculations.ts, pdf/) calendar/ stats/ settings/
 │  │  └─ <module>/ components/ actions.ts queries.ts schemas.ts types.ts
+│  ├─ hooks/                   # use-media-query, use-mobile
 │  ├─ lib/
 │  │  ├─ supabase/ server.ts client.ts proxy.ts admin.ts
 │  │  ├─ utils/ money.ts dates.ts format.ts cn.ts
