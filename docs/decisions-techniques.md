@@ -89,3 +89,27 @@ _13/11/2026 — validée_
 | react-day-picker | Sélecteur de date (composant Calendar shadcn) |
 
 Le calendrier principal est développé sur mesure avec date-fns (FullCalendar écarté : lourd et difficile à harmoniser avec le design).
+
+### DT-014 — shadcn/ui : base Radix, paquet `cn`, police Geist
+_13/11/2026 — validée_
+
+- shadcn 4.23 initialisé avec la base **Radix** (`radix-ui`), style `new-york`, couleur de base `neutral`, variables CSS. Radix est la base la plus éprouvée et la plus documentée.
+- shadcn 4.x installe le paquet **`cn`** (publié par le mainteneur de shadcn, dépôt `shadcn-ui/cn`) en remplacement de `clsx` + `tailwind-merge`. Origine vérifiée.
+- Police **Geist** (fournie par `next/font`). Couleur principale provisoire : indigo-600 ; palette complète en phase 2.
+- React Compiler **non activé** pour l'instant ; Playwright limité à **Chromium** (Firefox / WebKit avant la mise en ligne).
+
+### DT-015 — Configuration Next.js 16 par défaut conservée
+_13/11/2026 — à confirmer en phase 3_
+
+- Le gabarit officiel `create-next-app@16.4.6` active `cacheComponents` et `partialPrefetching`, et utilise le loader `@tailwindcss/turbopack` (pas de PostCSS).
+- **Décision** : conserver ces valeurs par défaut officielles.
+- **Conséquence** : les pages lisant des données dynamiques (cookies de session Supabase) devront placer ces accès dans des frontières `<Suspense>` ; à valider avec la doc embarquée (`node_modules/next/dist/docs/`) lors de l'intégration de l'authentification. Si c'est trop contraignant, la désactivation sera discutée et consignée ici.
+- `typecheck` exécute `next typegen` avant `tsc`, car les types globaux `LayoutProps` / `PageProps` sont générés.
+
+### DT-016 — Vulnérabilités npm audit des outils de développement
+_13/11/2026 — acceptée temporairement_
+
+- `npm audit` signale 7 vulnérabilités modérées (`deepmerge` via la CLI shadcn, `minimatch` via typescript-eslint / ts-morph).
+- Elles ne concernent que des **outils de développement**, jamais exécutés dans le navigateur ni en production. `npm audit fix --force` rétrograderait shadcn en 1.0.0 (cassant) : non appliqué.
+- **Action** : revérifier à chaque mise à jour des dépendances.
+- Note : ESLint 9 est signalé « plus supporté » par npm ; il reste requis par `eslint-config-next` 16.4 (DT-004). Passer à ESLint 10 dès que l'écosystème le permet.

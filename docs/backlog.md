@@ -16,10 +16,10 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 
 | ID | Tâche | Statut |
 |---|---|---|
-| B-003 | `create-next-app` (TS, App Router, `src/`, alias `@/`, Tailwind 4, ESLint) ; figer TypeScript 6.0.x et ESLint 9.x ; `strict` + options strictes supplémentaires | ⚪ |
-| B-004 | Scripts npm `dev`, `build`, `typecheck`, `lint`, `test`, `test:e2e` ; configurer Vitest et Playwright avec un test de fumée chacun | ⚪ |
-| B-005 | Initialiser shadcn/ui ; tokens de design (bleu / indigo, neutres, police) | ⚪ |
-| B-011 | Mettre à jour `CLAUDE.md` (section Commandes) et `docs/progress.md` | ⚪ |
+| B-003 | `create-next-app` (TS, App Router, `src/`, alias `@/`, Tailwind 4, ESLint) ; figer TypeScript 6.0.x et ESLint 9.x ; `strict` + options strictes supplémentaires | ✅ |
+| B-004 | Scripts npm `dev`, `build`, `typecheck`, `lint`, `test`, `test:e2e` ; configurer Vitest et Playwright avec un test de fumée chacun | ✅ |
+| B-005 | Initialiser shadcn/ui (Radix), couleur principale indigo provisoire, police Geist, page provisoire | ✅ |
+| B-011 | Mettre à jour `CLAUDE.md` (section Commandes) et `docs/progress.md` | ✅ |
 
 ## Phase 2 — Design global
 

@@ -72,7 +72,21 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 
 ## Commandes
 
-_À compléter lors de l'initialisation (tâche B-003 / B-004)._
+| Commande | Rôle |
+|---|---|
+| `npm run dev` | Serveur de développement (http://localhost:3000) |
+| `npm run build` | Build de production |
+| `npm run typecheck` | `next typegen` puis `tsc --noEmit` (les types `LayoutProps`/`PageProps` sont générés par Next) |
+| `npm run lint` | ESLint |
+| `npm test` | Tests unitaires Vitest (`tests/unit`, `src/**/*.test.ts(x)`) |
+| `npm run test:e2e` | Tests Playwright (`tests/e2e`, Chromium, démarre `npm run dev` automatiquement) |
+| `npx shadcn@4.23.0 add <composant>` | Ajouter un composant shadcn/ui (base Radix) |
+
+Vérification complète avant de déclarer une tâche terminée : `npm run typecheck && npm run lint && npm test && npm run build`, puis `npm run test:e2e` et contrôle visuel.
+
+## Next.js 16
+
+Lire `AGENTS.md` : la version de Next.js utilisée a des changements importants. Consulter la doc embarquée dans `node_modules/next/dist/docs/` avant d'utiliser une API Next. `cacheComponents` est activé (voir DT-015).
 
 ## Documentation
 
