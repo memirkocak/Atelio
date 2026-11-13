@@ -1,0 +1,86 @@
+# CLAUDE.md — Atelio
+
+Atelio est une application SaaS de gestion d'activité (CRM, projets, tâches, devis, calendrier, statistiques) pour indépendants, freelances, TPE et agences. Interface entièrement en français.
+
+Objectif : un projet réel, fonctionnel et sécurisé, déployé gratuitement (Vercel Hobby + Supabase Free) et présenté dans un portfolio LinkedIn. Les recruteurs doivent pouvoir l'essayer en un clic via le **mode démo**.
+
+## Méthode de travail (obligatoire)
+
+1. **Avant chaque tâche** : expliquer précisément ce qui va être fait (fichiers, commandes, choix, risques).
+2. **Discussion** : l'utilisateur ajuste si besoin.
+3. **Attendre un « go » explicite** avant de créer, installer, modifier ou committer quoi que ce soit. Un « go » ne vaut que pour la tâche présentée.
+4. **Exécution**, un module à la fois.
+5. **Bilan** : modifications, fichiers, vérifications et résultats, problèmes restants, prochaine étape.
+
+Une tâche n'est terminée que si elle a été vérifiée : `typecheck`, `lint`, tests pertinents, affichage navigateur, cas d'erreur, permissions.
+
+### Début de session
+1. Lire ce fichier.
+2. Lire `docs/progress.md`.
+3. Consulter `docs/roadmap.md` et `docs/backlog.md`.
+4. Examiner l'état du code (`git status`, `git log`).
+5. Identifier la prochaine tâche prioritaire et la présenter avant de commencer.
+
+### Fin de session
+1. Résumer les modifications, lister les fichiers créés/modifiés.
+2. Indiquer les tests effectués et leurs résultats.
+3. Signaler les problèmes restants.
+4. Mettre à jour `docs/progress.md` (et backlog / décisions si besoin).
+5. Indiquer précisément la prochaine étape.
+
+## Stack (versions figées)
+
+| Outil | Version | Note |
+|---|---|---|
+| Next.js (App Router) | 16.4.x | `proxy.ts` remplace `middleware.ts` |
+| React | 19.3.x | |
+| TypeScript | **6.0.x** strict | Pas TS 7 : typescript-eslint exige `<6.1` |
+| ESLint | **9.x** | Pas ESLint 10 : eslint-plugin-react/import incompatibles |
+| Tailwind CSS | 4.x | Configuration CSS-first |
+| shadcn/ui | CLI 4.x | Composants copiés dans `src/components/ui` |
+| Supabase | supabase-js 2.x, @supabase/ssr 0.12.x, CLI via `npx supabase` | **Pas de Docker** |
+| Zod / React Hook Form | 4.x / 7.x | |
+| Recharts / date-fns / lucide-react | 3.x / 4.x / 1.x | |
+| @react-pdf/renderer | 4.x | PDF des devis côté serveur |
+| Vitest / Playwright | 5.x / 1.x | |
+
+Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justification (à consigner dans `docs/decisions-techniques.md`).
+
+## Infrastructure
+
+- Supabase cloud, plan gratuit, **deux projets** : `atelio-dev` (développement + tests RLS) et `atelio-prod` (production, données propres).
+- Toute modification du schéma passe par une migration SQL versionnée dans `supabase/migrations/`, appliquée d'abord sur dev, puis sur prod.
+- Les secrets (mot de passe BDD, clés, tokens) sont saisis **par l'utilisateur** dans `.env.local` ou via `npx supabase login`. Ils ne transitent jamais par le chat et ne sont jamais committés.
+
+## Conventions
+
+- **Interface et routes en français** (`/w/[slug]/clients`, `/connexion`…). **Code en anglais** (variables, tables, types, fichiers).
+- Organisation par domaine : `src/features/<module>/` (`components/`, `actions.ts`, `queries.ts`, `schemas.ts`, `types.ts`).
+- Server Components par défaut ; `"use client"` seulement si nécessaire.
+- Écritures via **Server Actions** : validation Zod → contrôle de l'appartenance à l'espace → Supabase.
+- Montants en **centimes** (`bigint`), taux de TVA en **points de base** (2000 = 20 %). Jamais de flottant pour l'argent.
+- Échéances en `date`, rendez-vous en `timestamptz`, fuseau de référence `Europe/Paris`.
+- Fichiers courts et ciblés ; pas de composant qui mélange UI et logique métier.
+
+## Sécurité (non négociable)
+
+- RLS activée sur **toutes** les tables contenant des données privées ; chaque donnée métier porte un `workspace_id`.
+- Identité côté serveur via `supabase.auth.getClaims()`, jamais `getSession()`.
+- La clé secrète Supabase n'est utilisée que dans `src/lib/supabase/admin.ts` (`server-only`) pour les scripts d'administration (seed, reset démo), jamais dans un flux utilisateur.
+- Calculs des devis validés et recalculés côté serveur (fonction Postgres) ; devis non modifiable hors brouillon.
+- Ne jamais contourner une protection, ne jamais présenter des données fictives comme réelles (le mode démo est signalé par un bandeau).
+
+## Commandes
+
+_À compléter lors de l'initialisation (tâche B-003 / B-004)._
+
+## Documentation
+
+- `docs/cahier-des-charges.md` — besoin fonctionnel
+- `docs/architecture.md` — architecture technique et schéma de données
+- `docs/roadmap.md` — phases de développement
+- `docs/backlog.md` — tâches détaillées et statuts
+- `docs/decisions-techniques.md` — journal des décisions (ADR)
+- `docs/progress.md` — état d'avancement, à mettre à jour à chaque session
+
+Ces documents doivent rester cohérents avec le code réel.
