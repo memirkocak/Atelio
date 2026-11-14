@@ -1,0 +1,62 @@
+{
+  "description": "Cas de référence du calcul des devis, vérifiés à la fois par le calcul TypeScript (tests/unit) et par la base de données (tests/rls). Montants en centimes, taux en points de base.",
+  "cases": [
+    {
+      "name": "simple",
+      "vat_exempt": false,
+      "items": [{ "quantity": "2", "unit_price_cents": 50000, "vat_rate_bp": 2000 }],
+      "expected": { "lines": [[100000, 20000]], "subtotal": 100000, "vat": 20000, "total": 120000 }
+    },
+    {
+      "name": "quantité décimale, demi-centime arrondi vers le haut",
+      "vat_exempt": false,
+      "items": [{ "quantity": "1.5", "unit_price_cents": 33333, "vat_rate_bp": 2000 }],
+      "expected": { "lines": [[50000, 10000]], "subtotal": 50000, "vat": 10000, "total": 60000 }
+    },
+    {
+      "name": "TVA 5,5 % avec arrondi",
+      "vat_exempt": false,
+      "items": [{ "quantity": "3", "unit_price_cents": 1999, "vat_rate_bp": 550 }],
+      "expected": { "lines": [[5997, 330]], "subtotal": 5997, "vat": 330, "total": 6327 }
+    },
+    {
+      "name": "TVA d'un demi-centime exact",
+      "vat_exempt": false,
+      "items": [{ "quantity": "1", "unit_price_cents": 5, "vat_rate_bp": 1000 }],
+      "expected": { "lines": [[5, 1]], "subtotal": 5, "vat": 1, "total": 6 }
+    },
+    {
+      "name": "très petite quantité",
+      "vat_exempt": false,
+      "items": [{ "quantity": "0.003", "unit_price_cents": 500, "vat_rate_bp": 2000 }],
+      "expected": { "lines": [[2, 0]], "subtotal": 2, "vat": 0, "total": 2 }
+    },
+    {
+      "name": "arrondis en chaîne",
+      "vat_exempt": false,
+      "items": [{ "quantity": "1.333", "unit_price_cents": 3333, "vat_rate_bp": 2000 }],
+      "expected": { "lines": [[4443, 889]], "subtotal": 4443, "vat": 889, "total": 5332 }
+    },
+    {
+      "name": "plusieurs lignes et plusieurs taux",
+      "vat_exempt": false,
+      "items": [
+        { "quantity": "10", "unit_price_cents": 7500, "vat_rate_bp": 2000 },
+        { "quantity": "1", "unit_price_cents": 120000, "vat_rate_bp": 1000 },
+        { "quantity": "2.25", "unit_price_cents": 4000, "vat_rate_bp": 550 }
+      ],
+      "expected": {
+        "lines": [[75000, 15000], [120000, 12000], [9000, 495]],
+        "subtotal": 204000,
+        "vat": 27495,
+        "total": 231495
+      }
+    },
+    {
+      "name": "franchise en base de TVA (taux ramenés à 0)",
+      "vat_exempt": true,
+      "items": [{ "quantity": "3", "unit_price_cents": 12000, "vat_rate_bp": 2000 }],
+      "expected": { "lines": [[36000, 0]], "subtotal": 36000, "vat": 0, "total": 36000 }
+    }
+  ]
+}

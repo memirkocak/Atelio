@@ -216,6 +216,188 @@ export type Database = {
           },
         ]
       }
+      quote_counters: {
+        Row: {
+          last_value: number
+          workspace_id: string
+          year: number
+        }
+        Insert: {
+          last_value: number
+          workspace_id: string
+          year: number
+        }
+        Update: {
+          last_value?: number
+          workspace_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_counters_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_items: {
+        Row: {
+          description: string | null
+          id: string
+          label: string
+          line_subtotal_cents: number
+          line_total_cents: number
+          line_vat_cents: number
+          position: number
+          quantity: number
+          quote_id: string
+          unit: string | null
+          unit_price_cents: number
+          vat_rate_bp: number
+          workspace_id: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          label: string
+          line_subtotal_cents: number
+          line_total_cents: number
+          line_vat_cents: number
+          position: number
+          quantity: number
+          quote_id: string
+          unit?: string | null
+          unit_price_cents: number
+          vat_rate_bp: number
+          workspace_id: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          label?: string
+          line_subtotal_cents?: number
+          line_total_cents?: number
+          line_vat_cents?: number
+          position?: number
+          quantity?: number
+          quote_id?: string
+          unit?: string | null
+          unit_price_cents?: number
+          vat_rate_bp?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_items_quote_same_workspace"
+            columns: ["quote_id", "workspace_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id", "workspace_id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          accepted_at: string | null
+          client_id: string
+          client_snapshot: Json | null
+          created_at: string
+          created_by: string | null
+          id: string
+          issue_date: string
+          issuer_snapshot: Json | null
+          number: string
+          project_id: string | null
+          refused_at: string | null
+          search_text: string | null
+          sent_at: string | null
+          status: Database["public"]["Enums"]["quote_status"]
+          subtotal_cents: number
+          terms: string | null
+          title: string
+          total_cents: number
+          updated_at: string
+          valid_until: string
+          vat_cents: number
+          vat_exempt: boolean
+          workspace_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          client_id: string
+          client_snapshot?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          issue_date?: string
+          issuer_snapshot?: Json | null
+          number: string
+          project_id?: string | null
+          refused_at?: string | null
+          search_text?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["quote_status"]
+          subtotal_cents?: number
+          terms?: string | null
+          title: string
+          total_cents?: number
+          updated_at?: string
+          valid_until: string
+          vat_cents?: number
+          vat_exempt?: boolean
+          workspace_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          client_id?: string
+          client_snapshot?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          issue_date?: string
+          issuer_snapshot?: Json | null
+          number?: string
+          project_id?: string | null
+          refused_at?: string | null
+          search_text?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["quote_status"]
+          subtotal_cents?: number
+          terms?: string | null
+          title?: string
+          total_cents?: number
+          updated_at?: string
+          valid_until?: string
+          vat_cents?: number
+          vat_exempt?: boolean
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_client_same_workspace"
+            columns: ["client_id", "workspace_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id", "workspace_id"]
+          },
+          {
+            foreignKeyName: "quotes_project_same_workspace"
+            columns: ["project_id", "workspace_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id", "workspace_id"]
+          },
+          {
+            foreignKeyName: "quotes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           completed_at: string | null
@@ -310,40 +492,79 @@ export type Database = {
       }
       workspaces: {
         Row: {
+          address_line: string | null
+          city: string | null
+          company_name: string | null
+          country: string
           created_at: string
           created_by: string | null
           currency: string
           default_vat_rate_bp: number
+          email: string | null
           id: string
           is_demo: boolean
           name: string
+          phone: string | null
+          postal_code: string | null
+          quote_footer: string | null
+          quote_terms: string | null
+          quote_validity_days: number
+          siret: string | null
           slug: string
           timezone: string
           updated_at: string
+          vat_exempt: boolean
+          vat_number: string | null
         }
         Insert: {
+          address_line?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string
           created_at?: string
           created_by?: string | null
           currency?: string
           default_vat_rate_bp?: number
+          email?: string | null
           id?: string
           is_demo?: boolean
           name: string
+          phone?: string | null
+          postal_code?: string | null
+          quote_footer?: string | null
+          quote_terms?: string | null
+          quote_validity_days?: number
+          siret?: string | null
           slug: string
           timezone?: string
           updated_at?: string
+          vat_exempt?: boolean
+          vat_number?: string | null
         }
         Update: {
+          address_line?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string
           created_at?: string
           created_by?: string | null
           currency?: string
           default_vat_rate_bp?: number
+          email?: string | null
           id?: string
           is_demo?: boolean
           name?: string
+          phone?: string | null
+          postal_code?: string | null
+          quote_footer?: string | null
+          quote_terms?: string | null
+          quote_validity_days?: number
+          siret?: string | null
           slug?: string
           timezone?: string
           updated_at?: string
+          vat_exempt?: boolean
+          vat_number?: string | null
         }
         Relationships: []
       }
@@ -352,7 +573,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      duplicate_quote: {
+        Args: { p_quote_id: string; p_workspace_id: string }
+        Returns: string
+      }
+      save_quote: {
+        Args: {
+          p_items: Json
+          p_quote: Json
+          p_quote_id: string
+          p_workspace_id: string
+        }
+        Returns: string
+      }
+      set_quote_status: {
+        Args: {
+          p_quote_id: string
+          p_status: Database["public"]["Enums"]["quote_status"]
+          p_workspace_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       client_kind: "company" | "individual"
@@ -362,6 +603,7 @@ export type Database = {
         | "on_hold"
         | "completed"
         | "cancelled"
+      quote_status: "draft" | "sent" | "accepted" | "refused"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "todo" | "in_progress" | "done"
       workspace_role: "owner" | "admin" | "member"
@@ -500,6 +742,7 @@ export const Constants = {
         "completed",
         "cancelled",
       ],
+      quote_status: ["draft", "sent", "accepted", "refused"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["todo", "in_progress", "done"],
       workspace_role: ["owner", "admin", "member"],

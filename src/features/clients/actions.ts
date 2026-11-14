@@ -14,7 +14,7 @@ const INVALID_FORM = "Certains champs sont invalides.";
 const WORKSPACE_NOT_FOUND = "Espace de travail introuvable.";
 const CLIENT_NOT_FOUND = "Ce client n’existe plus ou vous n’y avez pas accès.";
 const DELETE_OVERRIDES = {
-  "23503": "Ce client ne peut pas être supprimé : des projets ou des devis y sont rattachés.",
+  "23503": "Ce client ne peut pas être supprimé : des devis y sont rattachés (ils doivent être conservés).",
 };
 
 const uuid = z.uuid();

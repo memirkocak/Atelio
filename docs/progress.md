@@ -163,6 +163,14 @@
 | `npm run test:e2e` | ✅ 41/41 sur deux passages consécutifs (dont 8 tâches : ajout rapide, cocher / annuler / rouvrir avec persistance, filtres, panneau, fiche projet, détachement, suppression, mobile, isolation) |
 | Navigateur | ✅ liste (1280 px) et mobile (375 px) |
 
+#### Tâche 9a — Devis : base de données et calculs (phase 8, partie a)
+- Migration 0006 (`quotes`, `quote_items`, `quote_counters`, informations d'entreprise sur `workspaces`, fonctions `save_quote` / `set_quote_status` / `duplicate_quote`, journal) appliquée après `--dry-run`.
+- `src/features/quotes/calculations.ts` + cas de référence partagés `tests/fixtures/quote-calculations.json`.
+- Tests : 12 unitaires (calcul), 30 tests base / sécurité (`tests/rls/quotes.test.ts`). Cible TypeScript ES2022. Décision DT-030.
+- Vérifications : typecheck, lint, build ✅ ; unitaires 108/108 ; RLS 83/83 ; E2E 41/41 (aucune régression).
+
 ## Prochaine étape
 
-**Phase 8 — Devis et PDF** : migration `quotes` / `quote_items` / numérotation (`DEV-AAAA-NNNN`), calculs HT / TVA / TTC dans une fonction Postgres qui fait foi (et le même calcul en TypeScript pour l'aperçu), instantané du client à l'envoi, statuts (brouillon, envoyé, accepté, refusé, expiré calculé), devis non modifiable hors brouillon, suppression d'un client bloquée s'il a des devis, génération du PDF (`@react-pdf/renderer`, police embarquée). C'est le module le plus sensible : à présenter en détail avant exécution.
+**Phase 8b — Devis : écrans et PDF** (paramètres de l'entreprise, liste, éditeur, fiche, PDF, tests E2E).
+
+**Phase 8 — Devis et PDF** (rappel) : migration `quotes` / `quote_items` / numérotation (`DEV-AAAA-NNNN`), calculs HT / TVA / TTC dans une fonction Postgres qui fait foi (et le même calcul en TypeScript pour l'aperçu), instantané du client à l'envoi, statuts (brouillon, envoyé, accepté, refusé, expiré calculé), devis non modifiable hors brouillon, suppression d'un client bloquée s'il a des devis, génération du PDF (`@react-pdf/renderer`, police embarquée). C'est le module le plus sensible : à présenter en détail avant exécution.

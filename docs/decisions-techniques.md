@@ -241,3 +241,17 @@ _14/11/2026 — validée_
 - **Interface** : liste type « liste de travail » ; ajout rapide (titre + Entrée, focus conservé) ; case « terminée » optimiste (`useOptimistic`) avec notification « Tâche terminée » et bouton **Annuler** ; tâches terminées masquées par défaut (`done=1` pour les afficher) ; modification et suppression dans un panneau latéral (pas de page dédiée) ; compteur « N à terminer · N en retard » (lien vers le filtre).
 - Fiche projet : tâches du projet, compteur « x / y terminées », ajout rapide rattaché au projet.
 - Pas de personne assignée en V1 (collaboration en V2 : colonne ajoutable sans refonte).
+
+### DT-030 — Devis : modèle de données, calculs et règles métier (migration 0006)
+_14/11/2026 — validée_
+
+- Tables `quotes`, `quote_items`, `quote_counters` ; enum `quote_status` (`draft`, `sent`, `accepted`, `refused`). « Expiré » est **dérivé** (envoyé et `valid_until` dépassée), conformément à DT-006.
+- **Aucune écriture directe** : les utilisateurs n'ont que `SELECT` (et `DELETE` des brouillons). Toute écriture passe par trois fonctions `SECURITY DEFINER` exposées en RPC : `save_quote` (création / modification d'un brouillon, remplacement des lignes, **recalcul de tous les montants**, montants transmis ignorés), `set_quote_status` (brouillon → envoyé → accepté / refusé, sans retour arrière) et `duplicate_quote`. Elles vérifient l'accès via `private.assert_workspace_access` (membre, ou `service_role` pour les scripts de démo).
+- **Calcul** : `private.quote_line_amounts` — HT ligne = arrondi(quantité × PU), TVA ligne = arrondi(HT × taux / 10 000), arrondi demi vers le haut, totaux = sommes. Miroir exact en TypeScript (`src/features/quotes/calculations.ts`, entiers `BigInt`) pour l'aperçu en direct. **Les deux sont vérifiés sur les mêmes cas** (`tests/fixtures/quote-calculations.json`).
+- **Numérotation** `DEV-AAAA-NNNN` par espace et par année, attribuée à la création du brouillon (`private.next_quote_number`, `INSERT … ON CONFLICT DO UPDATE` : verrou de ligne, aucun doublon en concurrence — testé avec 6 créations simultanées). Un brouillon supprimé laisse un trou (acceptable pour des devis).
+- **Envoi** : instantanés `client_snapshot` et `issuer_snapshot` (coordonnées figées) ; un devis envoyé n'est plus modifiable (on le **duplique**) ni supprimable.
+- **Intégrité** : client du même espace (clé composite, `ON DELETE RESTRICT` : un client ayant des devis ne peut pas être supprimé), projet du même espace (`SET NULL`), lignes liées au devis par clé composite (`CASCADE`). Contraintes de cohérence `total = HT + TVA` en base.
+- **Franchise en base de TVA** : `workspaces.vat_exempt` ; `save_quote` force alors tous les taux à 0 et mémorise `quotes.vat_exempt`.
+- Informations de l'entreprise (émetteur) ajoutées à `workspaces` (raison sociale, adresse, contact, SIRET à 14 chiffres, n° de TVA, validité par défaut, conditions, mentions de bas de page), modifiables par owner / admin (droits par colonne).
+- Erreurs métier : `AT001` devis non modifiable, `AT002` introuvable, `AT003` transition impossible, `AT004` lignes invalides.
+- `tsconfig` : cible passée de ES2017 à **ES2022** (littéraux `BigInt`). Après un tel changement, supprimer `tsconfig.tsbuildinfo` et `.next/cache/.tsbuildinfo` (caches incrémentaux qui conservent l'ancienne cible).
