@@ -36,7 +36,7 @@ function KpiCard({
   return (
     <article
       aria-label={label}
-      className="relative flex flex-col gap-2 rounded-lg border bg-background p-5 transition-colors focus-within:ring-2 focus-within:ring-ring hover:bg-muted/40"
+      className="relative flex min-w-0 flex-col gap-2 rounded-lg border bg-background p-4 transition-colors sm:p-5 focus-within:ring-2 focus-within:ring-ring hover:bg-muted/40"
     >
       <div className="flex items-center justify-between gap-2">
         {/* Le lien couvre toute la carte (pseudo-élément) ; les liens secondaires passent au-dessus. */}
@@ -45,7 +45,7 @@ function KpiCard({
         </Link>
         <Icon className="size-4 text-muted-foreground" aria-hidden />
       </div>
-      <p className="text-2xl font-semibold tracking-tight tabular-nums" data-testid="kpi-value">
+      <p className="text-xl font-semibold tracking-tight tabular-nums sm:text-2xl" data-testid="kpi-value">
         {value}
       </p>
       {children ? <div className="text-xs text-muted-foreground">{children}</div> : null}
@@ -58,7 +58,7 @@ export function KpiCards({ slug, stats }: { slug: string; stats: DashboardStats 
   const href = (segment: string, query = "") => `${workspaceHref(slug, segment)}${query}`;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
       <KpiCard label="Clients" value={String(stats.clients)} href={href("clients")} icon={Users} />
 
       <KpiCard

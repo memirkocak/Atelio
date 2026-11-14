@@ -302,3 +302,12 @@ _14/11/2026 — validée_
 - **Séries** complétées à zéro : par semaine (lundi) jusqu'à 92 jours, par mois au-delà. **État actuel** (tâches par statut / priorité, projets par statut) indépendant de la période. **Meilleurs clients** : 5 premiers par CA HT accepté.
 - Variation affichée « Nouveau » quand la période de comparaison valait 0 (pas de pourcentage infini).
 - `ModulePlaceholder` supprimé : toutes les pages de modules sont réelles.
+
+### DT-035 — Compte, suppression et accessibilité (phase 12a)
+_15/11/2026 — validée_
+
+- **Suppression de compte** : `public.delete_my_account()`, SECURITY DEFINER **sans paramètre** (cible = `auth.uid()` uniquement), seul moyen de supprimer une ligne de `auth.users` sans utiliser la clé secrète dans un parcours utilisateur. Supprime les espaces dont l'utilisateur est le **seul propriétaire** (contenu en cascade), puis le compte. Compte de démonstration refusé (`AT010`).
+- **Confirmation par mot de passe** (choix validé) pour le changement de mot de passe et la suppression : vérifié côté serveur par un client Supabase **isolé** (sans cookie ni stockage), dont la session de vérification est aussitôt révoquée (portée « local »). La session de l'utilisateur n'est pas touchée.
+- **Nom affiché** : mis à jour dans les métadonnées du compte (lues dans le jeton par `getClaims`) et dans `profiles` ; le jeton est rafraîchi pour un affichage immédiat. Le changement d'e-mail attend le SMTP (12f).
+- **Accessibilité** : `@axe-core/playwright` 4.14.0 (**dépendance de développement**, version exacte) — règles WCAG 2.1 A / AA sur 15 pages connectées remplies de données et 4 pages publiques. Corrections : graphiques Recharts 3 rendus non focalisables (`accessibilityLayer={false}`, déjà masqués aux lecteurs d'écran qui lisent le résumé `figcaption`), noms accessibles contenant le texte visible (WCAG 2.5.3), liens soulignés dans le texte (1.4.1), lien d'évitement (2.4.1) ciblant `<main>` via `useId()`.
+- Page « Mon compte » hors barre latérale (`accountNavItem`), reconnue par le fil d'Ariane.

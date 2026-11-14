@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   ListChecks,
   Settings,
+  UserRound,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -33,6 +34,9 @@ export const secondaryNavItems: readonly NavItem[] = [
 
 export const allNavItems: readonly NavItem[] = [...mainNavItems, ...secondaryNavItems];
 
+/** Page « Mon compte » : ouverte depuis le menu du compte, absente de la barre latérale. */
+export const accountNavItem: NavItem = { title: "Mon compte", segment: "compte", icon: UserRound };
+
 export const DEFAULT_WORKSPACE_SEGMENT = "tableau-de-bord";
 
 export function workspaceHref(slug: string, segment: string): string {
@@ -46,5 +50,5 @@ export function workspaceHref(slug: string, segment: string): string {
 export function findActiveNavItem(pathname: string): NavItem | undefined {
   const [, root, , segment] = pathname.split("/");
   if (root !== "w" || !segment) return undefined;
-  return allNavItems.find((item) => item.segment === segment);
+  return [...allNavItems, accountNavItem].find((item) => item.segment === segment);
 }

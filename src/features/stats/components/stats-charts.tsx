@@ -37,7 +37,7 @@ function TimeBars({
   return (
     <figure>
       <ChartContainer config={config} className="h-60 w-full" aria-hidden>
-        <BarChart data={data} margin={{ left: 4, right: 4 }} accessibilityLayer>
+        <BarChart data={data} margin={{ left: 4, right: 4 }} accessibilityLayer={false}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} minTickGap={8} />
           <YAxis
@@ -145,7 +145,7 @@ export function DistributionBars({
   return (
     <figure>
       <ChartContainer config={config} className="w-full" style={{ height: 40 + data.length * 36 }} aria-hidden>
-        <BarChart data={data} layout="vertical" margin={{ left: 4, right: 16 }} accessibilityLayer>
+        <BarChart data={data} layout="vertical" margin={{ left: 4, right: 16 }} accessibilityLayer={false}>
           <CartesianGrid horizontal={false} />
           <XAxis type="number" allowDecimals={false} tickLine={false} axisLine={false} />
           <YAxis type="category" dataKey="label" width={96} tickLine={false} axisLine={false} />

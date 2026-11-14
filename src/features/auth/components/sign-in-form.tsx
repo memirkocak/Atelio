@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { signIn } from "../actions";
 import { signInSchema, type SignInInput } from "../schemas";
 
-import { FormError } from "@/components/shared/form-alert";
+import { FormError, FormSuccess } from "@/components/shared/form-alert";
 import { PasswordInput } from "./password-input";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { useServerActionForm } from "@/hooks/use-server-action-form";
@@ -22,11 +22,16 @@ const LINK_ERRORS: Record<string, string> = {
   "aucun-espace": "Aucun espace de travail n’est associé à ce compte. Contactez le support.",
 };
 
+const INFO_MESSAGES: Record<string, string> = {
+  "compte-supprime": "Votre compte et ses données ont été supprimés.",
+};
+
 export function SignInForm() {
   const uid = useId();
   const searchParams = useSearchParams();
   const next = searchParams.get("next");
   const linkError = LINK_ERRORS[searchParams.get("erreur") ?? ""] ?? null;
+  const info = INFO_MESSAGES[searchParams.get("info") ?? ""] ?? null;
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -39,6 +44,7 @@ export function SignInForm() {
     <form onSubmit={onSubmit} noValidate>
       <FieldGroup>
         <FormError message={error ?? linkError} />
+        {info && !error ? <FormSuccess>{info}</FormSuccess> : null}
 
         <Field data-invalid={!!errors.email}>
           <FieldLabel htmlFor={`${uid}-email`}>Adresse e-mail</FieldLabel>

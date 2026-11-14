@@ -91,14 +91,14 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
             <dl className="grid gap-4 sm:grid-cols-2">
               <InfoItem icon={Mail} label="E-mail">
                 {client.email ? (
-                  <a href={`mailto:${client.email}`} className="text-info hover:underline">
+                  <a href={`mailto:${client.email}`} className="text-info underline underline-offset-2 hover:no-underline">
                     {client.email}
                   </a>
                 ) : null}
               </InfoItem>
               <InfoItem icon={Phone} label="Téléphone">
                 {client.phone ? (
-                  <a href={`tel:${client.phone.replace(/[^\d+]/g, "")}`} className="text-info tabular-nums hover:underline">
+                  <a href={`tel:${client.phone.replace(/[^\d+]/g, "")}`} className="text-info tabular-nums underline underline-offset-2 hover:no-underline">
                     {client.phone}
                   </a>
                 ) : null}

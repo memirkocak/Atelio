@@ -31,7 +31,7 @@ export function RevenueChart({ data }: { data: RevenuePoint[] }) {
   return (
     <figure>
       <ChartContainer config={revenueConfig} className="h-56 w-full" aria-hidden>
-        <BarChart data={data} margin={{ left: 4, right: 4 }} accessibilityLayer>
+        <BarChart data={data} margin={{ left: 4, right: 4 }} accessibilityLayer={false}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} />
           <YAxis
@@ -75,7 +75,7 @@ export function TasksChart({ data }: { data: TasksPoint[] }) {
   return (
     <figure>
       <ChartContainer config={tasksConfig} className="h-56 w-full" aria-hidden>
-        <BarChart data={data} margin={{ left: 4, right: 4 }} accessibilityLayer>
+        <BarChart data={data} margin={{ left: 4, right: 4 }} accessibilityLayer={false}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} />
           <YAxis tickLine={false} axisLine={false} width={32} allowDecimals={false} />

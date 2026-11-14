@@ -52,7 +52,7 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-042 | Génération des types TypeScript (`npm run db:types`) | ✅ |
 | B-043 | Tests RLS (deux utilisateurs, deux espaces) — `npm run test:rls` | ✅ |
 | B-044 | Layout `/w/[slug]` : contrôle d'appartenance (404), redirection vers l'espace par défaut, nom de l'espace dans la sidebar | ✅ |
-| B-045 | Suppression de compte : nettoyer les espaces dont l'utilisateur est seul propriétaire | ⏸️ phase 11 |
+| B-045 | Suppression de compte : nettoyer les espaces dont l'utilisateur est seul propriétaire | ✅ (12a, migration 0010) |
 
 ## Phase 5 — Clients
 
@@ -139,6 +139,17 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-112 | Page : sélecteur de période (URL), 8 indicateurs, 3 graphiques temporels, 3 répartitions, meilleurs clients | ✅ |
 | B-113 | Tests : 13 unitaires, 12 RLS, 5 E2E | ✅ |
 | B-114 | Export CSV, période personnalisée | ⏸️ V2 |
+
+## Phase 12a — Finitions
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-120 | Page Mon compte : nom affiché, changement de mot de passe | ✅ |
+| B-121 | Suppression du compte (migration 0010, confirmation par mot de passe) | ✅ |
+| B-122 | Accessibilité WCAG 2.1 AA (axe-core sur 19 pages), lien d'évitement | ✅ |
+| B-123 | Tableau de bord mobile sur 2 colonnes | ✅ |
+| B-124 | Tests : 6 unitaires, 4 RLS, 6 E2E compte + 19 accessibilité | ✅ |
+| B-125 | Changement d'adresse e-mail | ⏸️ après SMTP (12f) |
 
 ## Phases suivantes (à détailler au moment venu)
 

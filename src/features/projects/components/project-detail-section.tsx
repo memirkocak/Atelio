@@ -60,7 +60,7 @@ export async function ProjectDetailSection({ params }: { params: Promise<{ slug:
           </div>
           <p className="text-muted-foreground">
             {project.client ? (
-              <Link href={`/w/${slug}/clients/${project.client.id}`} className="text-info hover:underline">
+              <Link href={`/w/${slug}/clients/${project.client.id}`} className="text-info underline underline-offset-2 hover:no-underline">
                 {client}
               </Link>
             ) : (

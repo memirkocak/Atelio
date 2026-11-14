@@ -14,6 +14,7 @@
 - **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
 - **Phase 10 — Calendrier** : terminée. Rendez-vous (horaire ou journée entière, lieu, client, projet), vues mois et semaine (agenda), échéances des tâches, projets et devis envoyés, filtres par type.
 - **Phase 11 — Statistiques** : terminée. Indicateurs d'une période (CA, taux d'acceptation, panier moyen, devis, projets, tâches, actions) comparés à la période précédente, graphiques, meilleurs clients, état actuel des tâches et projets.
+- **Phase 12 — Finalisation** : en cours. 12a (finitions : Mon compte, suppression de compte, accessibilité, mobile) terminée ; restent 12b mode démo, 12c projet de production, 12d déploiement, 12e README, 12f e-mails (optionnel).
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -258,6 +259,29 @@
 - Pas de période personnalisée ni d'export CSV (V2, B-114).
 - Les dates de fin des tâches et projets n'existent que depuis les migrations 0004 / 0005 : les éléments terminés avant (aucun en production) n'apparaissent pas dans les séries.
 
+### Session 4 — 15/11/2026
+
+#### Tâche 13 — Finitions (phase 12a)
+- Migration 0010 `delete_my_account()` (SECURITY DEFINER sans paramètre : agit uniquement sur `auth.uid()` ; supprime les espaces dont l'utilisateur est le seul propriétaire puis le compte ; compte de démonstration refusé `AT010`) ; aperçu `--dry-run` puis application ; types régénérés. B-045 terminé.
+- Page `/w/[slug]/compte` (« Mon compte », depuis le menu du compte) : nom affiché (métadonnées + profil, jeton rafraîchi), changement de mot de passe (mot de passe actuel vérifié), suppression du compte confirmée par le mot de passe puis retour à la connexion avec message.
+- `src/lib/auth/verify-password.ts` : vérification du mot de passe par un client Supabase isolé (sans cookie), session de vérification révoquée aussitôt ; la clé secrète n'est jamais utilisée.
+- Accessibilité (axe-core, WCAG 2.1 A / AA) sur 19 pages : graphiques masqués non focalisables (`accessibilityLayer={false}`, résumés texte conservés), nom accessible du menu du compte et du logo contenant le texte visible, liens dans le texte soulignés, lien d'évitement « Aller au contenu ».
+- Tableau de bord mobile : cartes sur 2 colonnes.
+- Dépendance de développement : `@axe-core/playwright` 4.14.0 (version exacte). Décision DT-035.
+
+**Vérifications (tâche 13)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 160/160 (dont 6 compte) |
+| `npm run test:rls` | ✅ 119/119 (dont 4 suppression de compte : anonyme, démo refusée, cascade complète sans toucher aux autres, connexion impossible) |
+| `npm run test:e2e` | ✅ 92/92 sur la suite complète (dont 6 compte et 19 accessibilité) ; deux passages précédents perturbés par le passage de minuit pendant l'exécution et par une attente manquante dans un test (corrigée) |
+| Navigateur | ✅ Mon compte, tableau de bord mobile 2 colonnes, aucune erreur console ; compte temporaire supprimé |
+
+**Points ouverts**
+- Changement d'adresse e-mail : nécessite l'envoi d'e-mails (SMTP, 12f).
+- Les tests E2E qui dépendent de « aujourd'hui » peuvent échouer s'ils s'exécutent à cheval sur minuit (heure de Paris) — sans incidence sur l'application.
+
 ## Prochaine étape
 
-**Phase 12 — Finalisation et mise en ligne** (à découper en sous-tâches) : mode démo (compte pré-rempli, bandeau, bouton « Essayer la démo », réinitialisation nocturne), cron Vercel (maintien du projet Supabase), accessibilité et finitions (cartes du tableau de bord sur 2 colonnes en mobile…), projet Supabase `atelio-prod`, SMTP et modèles d'e-mails français (optionnel), déploiement Vercel, README portfolio. À présenter en détail avant exécution.
+**12b — Mode démo** : compte de démonstration pré-rempli (données réalistes sur plusieurs mois), bouton « Essayer la démo » sur l'accueil, bandeau « Mode démo », protections (pas de suppression de compte ni de changement de mot de passe), réinitialisation nocturne (Route Handler protégé par secret, appelé par le cron Vercel). À présenter en détail avant exécution.

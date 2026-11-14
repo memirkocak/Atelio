@@ -643,6 +643,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_my_account: { Args: never; Returns: undefined }
       duplicate_quote: {
         Args: { p_quote_id: string; p_workspace_id: string }
         Returns: string

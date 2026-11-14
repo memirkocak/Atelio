@@ -42,7 +42,7 @@ export async function DashboardSection({ params }: { params: Promise<{ slug: str
 export function DashboardSkeleton() {
   return (
     <div className="flex flex-col gap-6" aria-busy>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {Array.from({ length: 6 }, (_, i) => (
           <div key={i} className="space-y-3 rounded-lg border bg-background p-5">
             <Skeleton className="h-4 w-28" />

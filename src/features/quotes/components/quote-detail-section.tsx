@@ -48,13 +48,13 @@ export async function QuoteDetailSection({ params }: { params: Promise<{ slug: s
           <p className="text-muted-foreground">
             {quote.title}
             {" · "}
-            <Link href={`/w/${slug}/clients/${quote.client.id}`} className="text-info hover:underline">
+            <Link href={`/w/${slug}/clients/${quote.client.id}`} className="text-info underline underline-offset-2 hover:no-underline">
               {parties.client.name}
             </Link>
             {quote.project ? (
               <>
                 {" · "}
-                <Link href={`/w/${slug}/projets/${quote.project.id}`} className="text-info hover:underline">
+                <Link href={`/w/${slug}/projets/${quote.project.id}`} className="text-info underline underline-offset-2 hover:no-underline">
                   {quote.project.name}
                 </Link>
               </>
