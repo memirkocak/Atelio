@@ -29,13 +29,15 @@ export const getWorkspaceBySlug = cache(async (slug: string): Promise<WorkspaceS
   return data;
 });
 
-/** Chemin d'accueil d'un utilisateur : le tableau de bord de son espace par défaut. */
-export async function getHomePath(userId: string, client?: ServerClient): Promise<string> {
+/**
+ * Chemin d'accueil d'un utilisateur : le tableau de bord de son espace par défaut.
+ * null si aucun espace (anomalie) : l'appelant doit fermer la session (voir /demarrage).
+ */
+export async function getHomePath(userId: string, client?: ServerClient): Promise<string | null> {
   const workspace = await getDefaultWorkspace(userId, client);
   if (!workspace) {
-    // Ne devrait pas arriver : l'espace est créé par trigger à l'inscription.
     console.error("[workspaces] aucun espace pour l'utilisateur", userId);
-    return "/connexion?erreur=aucun-espace";
+    return null;
   }
   return workspaceHref(workspace.slug, DEFAULT_WORKSPACE_SEGMENT);
 }

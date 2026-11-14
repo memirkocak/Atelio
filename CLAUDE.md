@@ -56,7 +56,7 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 ## Conventions
 
 - **Interface et routes en français** (`/w/[slug]/clients`, `/connexion`…). **Code en anglais** (variables, tables, types, fichiers).
-- Organisation par domaine : `src/features/<module>/` (`components/`, `actions.ts`, `queries.ts`, `schemas.ts`, `types.ts`).
+- Organisation par domaine : `src/features/<module>/` (`components/`, `actions.ts`, `queries.ts`, `schemas.ts`, `constants.ts`). **Le module Clients est le modèle de référence** (DT-024) : le reproduire pour les modules suivants (migration + RLS + trigger de journal + tests RLS / unitaires / E2E).
 - Server Components par défaut ; `"use client"` seulement si nécessaire.
 - Écritures via **Server Actions** : validation Zod → contrôle de l'appartenance à l'espace → Supabase.
 - Montants en **centimes** (`bigint`), taux de TVA en **points de base** (2000 = 20 %). Jamais de flottant pour l'argent.

@@ -6,9 +6,10 @@
 - **Phase 1 — Initialisation** : terminée.
 - **Phase 2 — Design global** : terminée.
 - **Phase 3 — Authentification** : terminée.
-- **Phase 4 — Base de données et espaces** : terminée. Migration 0001 appliquée sur le projet de dev ; chaque inscription crée profil + espace + rôle propriétaire ; RLS testée (18 tests) ; accès à un espace contrôlé (404 sinon) ; nom de l'espace dans la sidebar.
-- Base de dev vide (tous les comptes de test supprimés).
-- Aperçu local : `npm run dev`, créer un compte sur http://localhost:3000/inscription → arrivée dans son espace.
+- **Phase 4 — Base de données et espaces** : terminée.
+- **Phase 5 — Clients** : terminée. Liste (recherche sans accents, filtre, tri, pagination), création / modification en panneau latéral, suppression confirmée, fiche client avec historique ; journal d'activité générique.
+- Base de dev : un seul compte, celui de l'utilisateur (aucun compte de test restant).
+- Aperçu local : `npm run dev`, se connecter puis ouvrir Clients.
 
 ## Historique des sessions
 
@@ -111,6 +112,23 @@
 - Espaces orphelins après suppression d'un compte : à traiter avec la suppression de compte (B-045, phase 11).
 - Dépôt GitHub toujours à créer (B-010).
 
+#### Tâche 6 — Module Clients (phase 5)
+- Migrations 0002 (`clients`, `activity_logs`, `pg_trgm`, `private.normalize_search`, `private.log_activity`) et 0003 (droits `service_role`), appliquées après `--dry-run` ; types régénérés.
+- `src/features/clients/` : constantes, schémas (formulaire, URL, conversions), requêtes, actions, composants (formulaire, panneau, suppression, barre d'outils, liste, fiche, historique).
+- Partagés : `src/lib/search.ts`, `src/lib/format.ts` (date-fns, fr), `src/lib/db-errors.ts`, `components/shared/pagination-nav.tsx`, `components/ui/toaster.tsx` ; `useServerActionForm`, `FormError`, `SubmitButton` déplacés dans `src/hooks` et `components/shared`.
+- Dépendances : `sonner` ; composants shadcn `table`, `sheet`, `alert-dialog`, `textarea`, `select`.
+- Bugs trouvés et corrigés : insert impossible par le client d'administration (migration 0003) ; boucle de redirection infinie pour une session sans espace ; téléphone commençant par « ( » refusé ; texte d'aide du formulaire inexact.
+- Décisions DT-024 à DT-026.
+
+**Vérifications (tâche 6)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 46/46 (dont 13 clients : recherche, schéma, URL) |
+| `npm run test:rls` | ✅ 31/31 (dont 13 clients / journal) |
+| `npm run test:e2e` | ✅ 25/25 (dont 8 clients + boucle de redirection) ; un passage interrompu par une mise en veille du PC, relancé sans erreur |
+| Navigateur | ✅ liste (1440 px), fiche, liste en cartes et panneau (375 px), aucune erreur console |
+
 ## Prochaine étape
 
-**Phase 5 — Clients (CRM)** : migration `clients` (rattachée à l'espace) + RLS + tests, liste avec recherche et filtres, création / modification / suppression (bloquée si devis liés, plus tard), fiche client. À présenter en détail avant exécution.
+**Phase 6 — Projets** : migration `projects` (client facultatif, statut, budget, dates, avancement) + RLS + journal, vue tableau, vue Kanban (glisser-déposer entre statuts), fiche projet, et affichage des projets dans la fiche client. À présenter en détail avant exécution.

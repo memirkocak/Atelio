@@ -185,3 +185,27 @@ _14/11/2026 — validée_
 - `connection()` est appelé dans `createClient()` (client serveur) : toute requête Supabase est évaluée au moment de la requête (DT-020).
 - Identifiants des champs de formulaire générés par `useId()` : évite les doublons d'`id` entre pages conservées en mémoire par Next (accessibilité).
 - En développement, chaque 404 volontaire d'un espace produit dans le terminal un message « Could not validate `instant` » : comportement attendu, sans effet en production.
+- **Session valide sans espace** (compte supprimé dont le jeton n'a pas expiré, anomalie) : `/demarrage` et les actions d'authentification **ferment la session** avant de rediriger vers `/connexion?erreur=aucun-espace`. Sans cela, le proxy renvoyait l'utilisateur « connecté » vers `/demarrage` → boucle de redirection infinie (bug trouvé au contrôle visuel de la phase 5, couvert par un test E2E).
+
+### DT-024 — Module Clients (modèle pour les modules métier)
+_14/11/2026 — validée_
+
+- **Migration 0002** : table `clients` (type entreprise / particulier, contact, entreprise, e-mail, téléphone, adresse structurée, pays, notes), contraintes alignées sur le schéma Zod, `created_by` rempli par défaut avec `auth.uid()` et non modifiable (droits par colonne), `workspace_id` figé après création.
+- **Recherche** : colonne générée `search_text` = `private.normalize_search(...)` (minuscules, sans accents), index trigrammes (`pg_trgm`) ; côté application, `containsPattern()` applique la même normalisation et échappe les jokers SQL. Recherche, filtre (type), tri et page dans l'URL, validés par Zod (valeur invalide → valeur par défaut).
+- **Structure de module** (à reproduire) : `src/features/<module>/` → `constants.ts`, `schemas.ts` (formulaire + paramètres d'URL + conversions ligne ↔ formulaire), `queries.ts` (`server-only`), `actions.ts` (Server Actions : Zod → résolution de l'espace par slug via la RLS → requête filtrée par `workspace_id` → `refresh()`), `components/`.
+- **Interface** : liste (tableau ≥ md, cartes sur mobile), création / modification dans un panneau latéral (`Sheet`), suppression avec `AlertDialog`, fiche détaillée en page, notifications `sonner` (wrapper `components/ui/toaster.tsx` sans `next-themes`). Pas de TanStack Table : pagination et tri côté serveur.
+- Hook partagé `useServerActionForm` (`src/hooks/`) : l'action reçoit les valeurs **saisies**, le serveur applique lui-même le schéma (validation + transformations).
+- Erreurs PostgreSQL traduites par `dbErrorMessage()` (`src/lib/db-errors.ts`) ; suppression bloquée par clé étrangère (devis, phase 8) déjà prévue (`23503`).
+
+### DT-025 — Journal d'activité générique
+_14/11/2026 — validée_
+
+- Table `activity_logs` (espace, auteur, type et identifiant d'entité, action `created` / `updated` / `deleted`, libellé conservé, champs modifiés). Écrite **uniquement** par le trigger `private.log_activity(entity_type, colonne_libellé, colonne_repli)` ; lecture seule pour les membres.
+- Les mises à jour sans changement réel ne sont pas journalisées ; les suppressions en cascade d'un espace supprimé sont ignorées (évite une violation de clé étrangère).
+- Pour un nouveau module : ajouter son `entity_type` à la contrainte CHECK et poser le trigger sur sa table.
+
+### DT-026 — Droits du rôle d'administration sur le schéma `private`
+_14/11/2026 — validée_
+
+- Migration 0003 : `service_role` reçoit `USAGE` sur `private` et `EXECUTE` sur `private.normalize_search`. Sans cela, un insert par le client d'administration (seed, démo, tests) échouait (« permission denied for function normalize_search ») à cause de la colonne générée. Test RLS de non-régression ajouté.
+- Règle : toute fonction `private` utilisée par une colonne générée ou une contrainte doit aussi être accordée à `service_role`.

@@ -14,6 +14,115 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          changes: string[]
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          summary: string
+          workspace_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          changes?: string[]
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          summary: string
+          workspace_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          changes?: string[]
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          summary?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          address_line: string | null
+          city: string | null
+          company_name: string | null
+          contact_name: string
+          country: string
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          kind: Database["public"]["Enums"]["client_kind"]
+          notes: string | null
+          phone: string | null
+          postal_code: string | null
+          search_text: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          address_line?: string | null
+          city?: string | null
+          company_name?: string | null
+          contact_name: string
+          country?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["client_kind"]
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          search_text?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          address_line?: string | null
+          city?: string | null
+          company_name?: string | null
+          contact_name?: string
+          country?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["client_kind"]
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          search_text?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -114,6 +223,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      client_kind: "company" | "individual"
       workspace_role: "owner" | "admin" | "member"
     }
     CompositeTypes: {
@@ -242,6 +352,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      client_kind: ["company", "individual"],
       workspace_role: ["owner", "admin", "member"],
     },
   },

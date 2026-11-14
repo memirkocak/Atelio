@@ -10,9 +10,9 @@ import { Input } from "@/components/ui/input";
 import { requestPasswordReset } from "../actions";
 import { forgotPasswordSchema, type ForgotPasswordInput } from "../schemas";
 
-import { FormError, FormSuccess } from "./form-alert";
-import { SubmitButton } from "./submit-button";
-import { useServerActionForm } from "./use-server-action-form";
+import { FormError, FormSuccess } from "@/components/shared/form-alert";
+import { SubmitButton } from "@/components/shared/submit-button";
+import { useServerActionForm } from "@/hooks/use-server-action-form";
 
 export function ForgotPasswordForm() {
   const uid = useId();

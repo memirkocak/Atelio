@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { adminClient } from "../support/supabase-test";
+
 import { byLabel, byTestId, byText } from "./helpers/locators";
 import { createTestUser, TEST_PASSWORD, uniqueTestEmail } from "./helpers/test-users";
 
@@ -103,6 +105,25 @@ test("l'espace d'un autre utilisateur ou un espace inconnu donne une page 404", 
     await expect(byText(page, "Espace de Olivier")).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1, name: "Clients" })).toHaveCount(0);
   }
+});
+
+test("session valide sans espace : déconnexion propre, sans boucle de redirection", async ({ page }) => {
+  const user = await createTestUser("Sans Espace");
+  await page.goto("/connexion");
+  await signIn(page, user.email, user.password);
+  await expect(page).toHaveURL(`/w/${user.slug}/tableau-de-bord`);
+
+  // L'espace disparaît alors que le jeton de session reste valide (ex. compte en cours de suppression)
+  const { error } = await adminClient().from("workspaces").delete().eq("slug", user.slug);
+  expect(error).toBeNull();
+
+  await page.goto("/connexion");
+  await expect(page).toHaveURL("/connexion?erreur=aucun-espace");
+  await expect(byText(page, /Aucun espace de travail n’est associé à ce compte/)).toBeVisible();
+
+  // La session a été fermée : les pages protégées renvoient vers la connexion
+  await page.goto(`/w/${user.slug}/clients`);
+  await expect(page).toHaveURL(/\/connexion\?next=/);
 });
 
 test("mot de passe oublié : validation du formulaire", async ({ page }) => {

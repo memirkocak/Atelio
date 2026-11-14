@@ -62,6 +62,32 @@ export async function getWorkspaceSlug(userId: string): Promise<string> {
   return data.slug;
 }
 
+export type WorkspaceUser = {
+  id: string;
+  email: string;
+  workspaceId: string;
+  slug: string;
+  client: TypedClient;
+};
+
+/** Crée un utilisateur, récupère son espace personnel et ouvre une session (clé publique). */
+export async function setupWorkspaceUser(prefix: string, fullName: string): Promise<WorkspaceUser> {
+  const user = await createConfirmedUser(prefix, fullName);
+  const { data, error } = await adminClient()
+    .from("workspaces")
+    .select("id, slug")
+    .eq("created_by", user.id)
+    .single();
+  if (error) throw error;
+  return {
+    id: user.id,
+    email: user.email,
+    workspaceId: data.id,
+    slug: data.slug,
+    client: await signedInClient(user.email),
+  };
+}
+
 /** Client connecté en tant qu'utilisateur (clé publique + session) : la RLS s'applique. */
 export async function signedInClient(email: string, password = TEST_PASSWORD): Promise<TypedClient> {
   const client = anonClient();

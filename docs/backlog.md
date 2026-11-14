@@ -54,9 +54,21 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-044 | Layout `/w/[slug]` : contrôle d'appartenance (404), redirection vers l'espace par défaut, nom de l'espace dans la sidebar | ✅ |
 | B-045 | Suppression de compte : nettoyer les espaces dont l'utilisateur est seul propriétaire | ⏸️ phase 11 |
 
+## Phase 5 — Clients
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-050 | Migration 0002 : `clients`, `activity_logs`, recherche normalisée, RLS, droits par colonne | ✅ |
+| B-051 | Migration 0003 : droits `service_role` sur `private.normalize_search` | ✅ |
+| B-052 | Couche métier : schémas, requêtes, Server Actions | ✅ |
+| B-053 | Liste : recherche, filtre, tri, pagination (URL), tableau / cartes mobiles, états vides | ✅ |
+| B-054 | Panneau de création / modification, suppression confirmée, notifications | ✅ |
+| B-055 | Fiche client : coordonnées, notes, historique, emplacements Projets / Devis | ✅ |
+| B-056 | Tests : 13 unitaires, 13 RLS, 8 E2E (+ test de non-régression de la boucle de redirection) | ✅ |
+| B-057 | Fiche client : lister les projets (phase 6) et les devis (phase 8) du client | ⏸️ |
+
 ## Phases suivantes (à détailler au moment venu)
 
-- Phase 5 — Clients
 - Phase 6 — Projets (tableau + Kanban)
 - Phase 7 — Tâches
 - Phase 8 — Devis & PDF

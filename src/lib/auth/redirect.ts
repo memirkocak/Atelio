@@ -1,5 +1,8 @@
-/** Page d'arrivée après connexion (phase 3 ; remplacée par l'espace de travail en phase 4). */
+/** Point d'entrée HTTP après connexion : redirige vers l'espace de l'utilisateur. */
 export const DEFAULT_AFTER_LOGIN = "/demarrage";
+
+/** Destination quand un compte n'a aucun espace (la session doit être fermée avant). */
+export const NO_WORKSPACE_PATH = "/connexion?erreur=aucun-espace";
 
 const BASE = "http://atelio.invalid";
 

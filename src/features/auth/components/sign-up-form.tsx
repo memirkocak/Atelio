@@ -16,10 +16,10 @@ import { Input } from "@/components/ui/input";
 import { signUp } from "../actions";
 import { signUpSchema, type SignUpInput } from "../schemas";
 
-import { FormError, FormSuccess } from "./form-alert";
+import { FormError, FormSuccess } from "@/components/shared/form-alert";
 import { PasswordInput } from "./password-input";
-import { SubmitButton } from "./submit-button";
-import { useServerActionForm } from "./use-server-action-form";
+import { SubmitButton } from "@/components/shared/submit-button";
+import { useServerActionForm } from "@/hooks/use-server-action-form";
 
 export function SignUpForm() {
   const uid = useId();

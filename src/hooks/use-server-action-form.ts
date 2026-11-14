@@ -4,23 +4,28 @@ import { useState, useTransition } from "react";
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 import type { ActionResult } from "@/lib/action-result";
-import { GENERIC_AUTH_ERROR } from "@/lib/auth/errors";
+
+const GENERIC_ERROR = "Une erreur est survenue. Réessayez dans un instant.";
 
 /**
  * Relie un formulaire React Hook Form à une Server Action :
  * état d'envoi, erreur globale et erreurs de champ renvoyées par le serveur.
  * Une redirection déclenchée par l'action (redirect()) est gérée par Next.js.
+ *
+ * L'action reçoit les valeurs SAISIES (après validation côté client) : le serveur
+ * applique lui-même le schéma Zod (validation et transformations) et fait foi.
  */
-export function useServerActionForm<TValues extends FieldValues, TData>(
-  form: UseFormReturn<TValues>,
+export function useServerActionForm<TValues extends FieldValues, TData, TOutput = TValues>(
+  form: UseFormReturn<TValues, unknown, TOutput>,
   action: (values: TValues) => Promise<ActionResult<TData>>,
   onSuccess?: (data: TData) => void,
 ) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = form.handleSubmit((values) => {
+  const onSubmit = form.handleSubmit(() => {
     setError(null);
+    const values = form.getValues();
     startTransition(async () => {
       try {
         const result = await action(values);
@@ -36,7 +41,7 @@ export function useServerActionForm<TValues extends FieldValues, TData>(
       } catch (e) {
         // Les redirections de Next.js sont propagées, pas affichées comme erreurs.
         if (isNextRedirect(e)) throw e;
-        setError(GENERIC_AUTH_ERROR);
+        setError(GENERIC_ERROR);
       }
     });
   });

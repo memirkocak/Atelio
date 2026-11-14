@@ -24,6 +24,23 @@ function confirmUrl(next: string): string {
   return `${getSiteUrl()}/auth/confirm?next=${encodeURIComponent(next)}`;
 }
 
+const NO_WORKSPACE = "Aucun espace de travail n’est associé à ce compte. Contactez le support.";
+
+type ServerClient = Awaited<ReturnType<typeof createClient>>;
+
+/**
+ * Redirige vers l'espace de l'utilisateur. Sans espace (anomalie), la session est fermée
+ * et une erreur est renvoyée : sinon le proxy créerait une boucle de redirection.
+ */
+async function redirectHome(supabase: ServerClient, userId: string): Promise<ActionResult> {
+  const home = await getHomePath(userId, supabase);
+  if (!home) {
+    await supabase.auth.signOut({ scope: "local" });
+    return fail(NO_WORKSPACE);
+  }
+  redirect(home);
+}
+
 function fieldErrors(error: z.ZodError) {
   return z.flattenError(error).fieldErrors as Record<string, string[]>;
 }
@@ -38,7 +55,8 @@ export async function signIn(input: unknown, next?: string | null): Promise<Acti
 
   // Page demandée avant la connexion, sinon l'espace de l'utilisateur.
   const requested = safeNextPath(next, "");
-  redirect(requested || (await getHomePath(data.user.id, supabase)));
+  if (requested) redirect(requested);
+  return redirectHome(supabase, data.user.id);
 }
 
 export type SignUpResult = ActionResult<{ needsEmailConfirmation: boolean }>;
@@ -60,7 +78,10 @@ export async function signUp(input: unknown): Promise<SignUpResult> {
   if (error) return fail(authErrorMessage(error));
 
   // Confirmation désactivée (projet de dev) : session immédiate.
-  if (data.session && data.user) redirect(await getHomePath(data.user.id, supabase));
+  if (data.session && data.user) {
+    const result = await redirectHome(supabase, data.user.id);
+    if (!result.ok) return result;
+  }
 
   // Confirmation activée : même réponse que le compte existe ou non (pas d'énumération).
   return ok({ needsEmailConfirmation: true });
@@ -93,7 +114,7 @@ export async function updatePassword(input: unknown): Promise<ActionResult> {
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return fail(authErrorMessage(error));
 
-  redirect(await getHomePath(data.claims.sub, supabase));
+  return redirectHome(supabase, data.claims.sub);
 }
 
 export async function signOut(): Promise<void> {

@@ -15,10 +15,10 @@ import {
 import { updatePassword } from "../actions";
 import { resetPasswordSchema, type ResetPasswordInput } from "../schemas";
 
-import { FormError } from "./form-alert";
+import { FormError } from "@/components/shared/form-alert";
 import { PasswordInput } from "./password-input";
-import { SubmitButton } from "./submit-button";
-import { useServerActionForm } from "./use-server-action-form";
+import { SubmitButton } from "@/components/shared/submit-button";
+import { useServerActionForm } from "@/hooks/use-server-action-form";
 
 export function ResetPasswordForm() {
   const uid = useId();
