@@ -2,7 +2,6 @@ import { CirclePlus, PencilLine, Trash2, type LucideIcon } from "lucide-react";
 
 import { formatDateTime, formatRelative } from "@/lib/format";
 
-import { CLIENT_FIELD_LABELS } from "../constants";
 import type { ActivityItem } from "../queries";
 
 const ACTIONS: Record<string, { icon: LucideIcon; verb: string }> = {
@@ -11,8 +10,15 @@ const ACTIONS: Record<string, { icon: LucideIcon; verb: string }> = {
   deleted: { icon: Trash2, verb: "Fiche supprimée" },
 };
 
-/** Historique d'un client, alimenté par le journal d'activité (triggers SQL). */
-export function ClientActivity({ items }: { items: ActivityItem[] }) {
+/** Historique d'une entité, alimenté par le journal d'activité (triggers SQL). */
+export function ActivityTimeline({
+  items,
+  fieldLabels,
+}: {
+  items: ActivityItem[];
+  /** Libellés des colonnes modifiées (ex. phone → « téléphone »). */
+  fieldLabels: Record<string, string>;
+}) {
   if (items.length === 0) {
     return <p className="text-muted-foreground">Aucune activité enregistrée.</p>;
   }
@@ -22,7 +28,7 @@ export function ClientActivity({ items }: { items: ActivityItem[] }) {
       {items.map((item) => {
         const action = ACTIONS[item.action] ?? ACTIONS.updated!;
         const Icon = action.icon;
-        const fields = item.changes.map((c) => CLIENT_FIELD_LABELS[c] ?? c);
+        const fields = item.changes.map((c) => fieldLabels[c] ?? c);
         return (
           <li key={item.id} className="relative flex gap-3">
             <span className="z-10 flex size-6 shrink-0 items-center justify-center rounded-full border bg-background text-muted-foreground">

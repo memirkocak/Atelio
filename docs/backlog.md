@@ -10,7 +10,7 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 |---|---|---|
 | B-001 | Initialiser Git (branche `main`) et `.gitignore` | ✅ |
 | B-002 | Rédiger `CLAUDE.md` et les 6 documents de `/docs` | ✅ |
-| B-010 | Créer le dépôt GitHub `atelio` (public, vide) — **par l'utilisateur** — puis ajouter le remote et pousser | ⏸️ |
+| B-010 | Dépôt GitHub `memirkocak/Atelio` créé et relié par l'utilisateur ; push à la fin de chaque phase | ✅ |
 
 ## Phase 1 — Initialisation
 
@@ -65,7 +65,21 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-054 | Panneau de création / modification, suppression confirmée, notifications | ✅ |
 | B-055 | Fiche client : coordonnées, notes, historique, emplacements Projets / Devis | ✅ |
 | B-056 | Tests : 13 unitaires, 13 RLS, 8 E2E (+ test de non-régression de la boucle de redirection) | ✅ |
-| B-057 | Fiche client : lister les projets (phase 6) et les devis (phase 8) du client | ⏸️ |
+| B-057 | Fiche client : lister les projets (✅ phase 6) et les devis (phase 8) du client | 🟡 |
+
+## Phase 6 — Projets
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-060 | Migration 0004 : `projects`, clé étrangère composite vers `clients`, `completed_at`, RLS, journal | ✅ |
+| B-061 | Utilitaires argent (centimes) et dates (Paris) | ✅ |
+| B-062 | Couche métier : schémas, requêtes, actions (dont changement de statut seul) | ✅ |
+| B-063 | Liste tableau (recherche, statut, client, tri, pagination, retard, budget, avancement) | ✅ |
+| B-064 | Vue Kanban : glisser-déposer (souris, toucher, clavier), mise à jour optimiste, menu de statut | ✅ |
+| B-065 | Panneau de création / modification, suppression confirmée, fiche projet avec historique | ✅ |
+| B-066 | Fiche client : liste des projets, création préremplie, avertissement à la suppression | ✅ |
+| B-067 | Tests : 30 unitaires, 13 RLS, 8 E2E ; isolation des suites E2E | ✅ |
+| B-068 | Fiche projet : liste des tâches (phase 7) | ⏸️ |
 
 ## Phases suivantes (à détailler au moment venu)
 

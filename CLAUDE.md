@@ -57,7 +57,9 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 
 - **Interface et routes en français** (`/w/[slug]/clients`, `/connexion`…). **Code en anglais** (variables, tables, types, fichiers).
 - Organisation par domaine : `src/features/<module>/` (`components/`, `actions.ts`, `queries.ts`, `schemas.ts`, `constants.ts`). **Le module Clients est le modèle de référence** (DT-024) : le reproduire pour les modules suivants (migration + RLS + trigger de journal + tests RLS / unitaires / E2E).
-- Server Components par défaut ; `"use client"` seulement si nécessaire.
+- Server Components par défaut ; `"use client"` seulement si nécessaire. Un composant client n'importe **jamais** de valeur depuis un `queries.ts` (`server-only`) : types et utilitaires partagés dans `types.ts` (DT-027).
+- Références entre tables métier : clé étrangère composite `(x_id, workspace_id)` pour garantir le même espace (DT-027).
+- Tests E2E qui créent des données : `isolatedUser()` (un espace par fichier) ; vérifier après rechargement (DT-028).
 - Écritures via **Server Actions** : validation Zod → contrôle de l'appartenance à l'espace → Supabase.
 - Montants en **centimes** (`bigint`), taux de TVA en **points de base** (2000 = 20 %). Jamais de flottant pour l'argent.
 - Échéances en `date`, rendez-vous en `timestamptz`, fuseau de référence `Europe/Paris`.

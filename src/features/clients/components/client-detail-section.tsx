@@ -1,19 +1,23 @@
-import { ArrowLeft, FileText, FolderKanban, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, FileText, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { ReactNode } from "react";
 import { z } from "zod";
 
+import { InfoItem, Panel, UpcomingNotice } from "@/components/shared/panel";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { ActivityTimeline } from "@/features/activity/components/activity-timeline";
+import { getEntityActivity } from "@/features/activity/queries";
+import { NewProjectButton } from "@/features/projects/components/new-project-button";
+import { ProjectDueDate, ProjectStatusBadge } from "@/features/projects/components/project-display";
+import { listProjectsForClient } from "@/features/projects/queries";
 import { getWorkspaceBySlug } from "@/features/workspaces/queries";
 import { formatDate } from "@/lib/format";
 
-import { CLIENT_KIND_LABELS } from "../constants";
-import { getClient, getClientActivity } from "../queries";
+import { CLIENT_FIELD_LABELS, CLIENT_KIND_LABELS } from "../constants";
+import { getClient, listClientOptions } from "../queries";
 import { toClientFormInput } from "../schemas";
 
 import { ClientActions } from "./client-actions";
-import { ClientActivity } from "./client-activity";
 import { ClientAvatar, clientDisplayName } from "./client-identity";
 
 /** Fiche client (données d'exécution : à placer dans <Suspense>). */
@@ -26,7 +30,11 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
 
   const client = await getClient(workspace.id, id);
   if (!client) notFound();
-  const activity = await getClientActivity(workspace.id, id);
+  const [activity, projects, clientOptions] = await Promise.all([
+    getEntityActivity(workspace.id, "client", id),
+    listProjectsForClient(workspace.id, id),
+    listClientOptions(workspace.id),
+  ]);
 
   const name = clientDisplayName(client);
   const address = [client.address_line, [client.postal_code, client.city].filter(Boolean).join(" "), client.country]
@@ -64,6 +72,7 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
             slug={slug}
             clientId={client.id}
             clientLabel={name}
+            projectCount={projects.length}
             defaultValues={toClientFormInput(client)}
           />
         </div>
@@ -73,23 +82,23 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
         <div className="flex flex-col gap-6 lg:col-span-2">
           <Panel title="Coordonnées">
             <dl className="grid gap-4 sm:grid-cols-2">
-              <Info icon={Mail} label="E-mail">
+              <InfoItem icon={Mail} label="E-mail">
                 {client.email ? (
                   <a href={`mailto:${client.email}`} className="text-info hover:underline">
                     {client.email}
                   </a>
                 ) : null}
-              </Info>
-              <Info icon={Phone} label="Téléphone">
+              </InfoItem>
+              <InfoItem icon={Phone} label="Téléphone">
                 {client.phone ? (
                   <a href={`tel:${client.phone.replace(/[^\d+]/g, "")}`} className="text-info tabular-nums hover:underline">
                     {client.phone}
                   </a>
                 ) : null}
-              </Info>
-              <Info icon={MapPin} label="Adresse" className="sm:col-span-2">
+              </InfoItem>
+              <InfoItem icon={MapPin} label="Adresse" className="sm:col-span-2">
                 {address ? <span className="whitespace-pre-line">{address}</span> : null}
-              </Info>
+              </InfoItem>
             </dl>
           </Panel>
 
@@ -101,60 +110,49 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
             )}
           </Panel>
 
-          <div className="grid gap-6 sm:grid-cols-2">
-            <Panel title="Projets">
-              <Upcoming icon={FolderKanban} text="Les projets de ce client apparaîtront ici avec le module Projets." />
-            </Panel>
-            <Panel title="Devis">
-              <Upcoming icon={FileText} text="Les devis de ce client apparaîtront ici avec le module Devis." />
-            </Panel>
-          </div>
+          <Panel
+            title={projects.length > 0 ? `Projets (${projects.length})` : "Projets"}
+            action={
+              <NewProjectButton
+                slug={slug}
+                clientOptions={clientOptions}
+                defaultClientId={client.id}
+                label="Nouveau projet"
+                variant="outline"
+              />
+            }
+          >
+            {projects.length === 0 ? (
+              <p className="text-muted-foreground">Aucun projet pour ce client.</p>
+            ) : (
+              <ul className="-mx-2 divide-y">
+                {projects.map((p) => (
+                  <li key={p.id}>
+                    <Link
+                      href={`/w/${slug}/projets/${p.id}`}
+                      className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md px-2 py-2.5 hover:bg-muted/50"
+                    >
+                      <span className="min-w-0 truncate font-medium">{p.name}</span>
+                      <span className="flex items-center gap-3 text-xs">
+                        <ProjectDueDate project={p} className="text-xs" />
+                        <ProjectStatusBadge status={p.status} />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+
+          <Panel title="Devis">
+            <UpcomingNotice icon={FileText} text="Les devis de ce client apparaîtront ici avec le module Devis." />
+          </Panel>
         </div>
 
         <Panel title="Historique">
-          <ClientActivity items={activity} />
+          <ActivityTimeline items={activity} fieldLabels={CLIENT_FIELD_LABELS} />
         </Panel>
       </div>
-    </div>
-  );
-}
-
-function Panel({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="rounded-lg border bg-background p-5">
-      <h2 className="mb-4 text-sm font-semibold">{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-function Info({
-  icon: Icon,
-  label,
-  children,
-  className,
-}: {
-  icon: typeof Mail;
-  label: string;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <dt className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Icon className="size-3.5" aria-hidden />
-        {label}
-      </dt>
-      <dd>{children ?? <span className="text-muted-foreground">Non renseigné</span>}</dd>
-    </div>
-  );
-}
-
-function Upcoming({ icon: Icon, text }: { icon: typeof Mail; text: string }) {
-  return (
-    <div className="flex items-start gap-3 text-muted-foreground">
-      <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
-      <p>{text}</p>
     </div>
   );
 }

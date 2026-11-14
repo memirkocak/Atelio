@@ -2,18 +2,19 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { adminClient } from "../support/supabase-test";
 
-import { AUTH_STATE_FILE, testWorkspaceSlug } from "./helpers/auth-state";
+import { isolatedUser } from "./helpers/isolated-user";
 import { byText } from "./helpers/locators";
 import { createTestUser } from "./helpers/test-users";
 
 /*
- * Module Clients — parcours complet sur l'espace de l'utilisateur de test (auth.setup.ts).
+ * Module Clients — parcours complet sur un espace dédié à ce fichier (isolatedUser).
  * Exécution en série : les tests construisent un même jeu de données.
  */
-test.use({ storageState: AUTH_STATE_FILE, viewport: { width: 1440, height: 900 } });
+test.use({ viewport: { width: 1440, height: 900 } });
 test.describe.configure({ mode: "serial" });
+const me = isolatedUser(test, "clients", "Camille Clients");
 
-const list = () => `/w/${testWorkspaceSlug()}/clients`;
+const list = () => `/w/${me.slug}/clients`;
 
 async function openNewClientSheet(page: Page, buttonName = "Ajouter un client") {
   await page.getByRole("button", { name: buttonName }).first().click();

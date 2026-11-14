@@ -14,11 +14,13 @@ export function ClientActions({
   slug,
   clientId,
   clientLabel,
+  projectCount,
   defaultValues,
 }: {
   slug: string;
   clientId: string;
   clientLabel: string;
+  projectCount: number;
   defaultValues: ClientFormInput;
 }) {
   return (
@@ -39,6 +41,7 @@ export function ClientActions({
         slug={slug}
         clientId={clientId}
         clientLabel={clientLabel}
+        projectCount={projectCount}
         redirectTo={`/w/${slug}/clients`}
         trigger={
           <Button variant="outline" className="text-destructive hover:text-destructive">

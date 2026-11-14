@@ -209,3 +209,24 @@ _14/11/2026 — validée_
 
 - Migration 0003 : `service_role` reçoit `USAGE` sur `private` et `EXECUTE` sur `private.normalize_search`. Sans cela, un insert par le client d'administration (seed, démo, tests) échouait (« permission denied for function normalize_search ») à cause de la colonne générée. Test RLS de non-régression ajouté.
 - Règle : toute fonction `private` utilisée par une colonne générée ou une contrainte doit aussi être accordée à `service_role`.
+
+### DT-027 — Module Projets
+_14/11/2026 — validée_
+
+- **Migration 0004** : enum `project_status` (`upcoming`, `in_progress`, `on_hold`, `completed`, `cancelled`), table `projects` (nom, client facultatif, statut, `budget_cents`, `start_date`, `due_date`, `progress` 0-100, description, `completed_at`, `search_text`), contraintes (ordre des dates, budget ≥ 0, avancement borné), RLS et droits par colonne identiques aux clients, journal (`entity_type = 'project'`).
+- **Intégrité entre espaces** : la RLS ne vérifie pas l'espace d'une ligne *référencée*. Le client d'un projet est donc contraint par une **clé étrangère composite** `(client_id, workspace_id) → clients(id, workspace_id)` (contrainte `UNIQUE (id, workspace_id)` ajoutée sur `clients`), avec `ON DELETE SET NULL (client_id)` : supprimer un client détache ses projets sans les supprimer. À reproduire pour toute référence entre tables métier (tâches → projets, devis → clients).
+- `completed_at` est géré par trigger (passage au statut terminé / sortie de ce statut) et n'est pas modifiable directement.
+- **Argent** : `src/lib/money.ts` (saisie « 1 500,50 » → 150050 centimes, refus de plus de 2 décimales ; affichage `Intl` fr-FR). **Dates** : `src/lib/dates.ts` (jour courant à Paris, validation `AAAA-MM-JJ`, affichage sans décalage de fuseau) ; champs date natifs du navigateur (pas de bibliothèque de calendrier).
+- **Retard** : projet actif (`upcoming`, `in_progress`, `on_hold`) dont l'échéance est strictement passée (jour de Paris).
+- **Kanban** : `@dnd-kit/core` (souris, toucher avec délai, clavier via une poignée dédiée, annonces en français), mise à jour optimiste avec `useOptimistic` (retour automatique en cas d'échec serveur), menu « Changer le statut » sur chaque carte. Pas de réordonnancement manuel : cartes triées par échéance. Vue limitée à 300 projets.
+- Vue (`view=kanban`), recherche, statut, client, tri et page dans l'URL.
+- Journal partagé : `src/features/activity/` (`getEntityActivity`, `ActivityTimeline` avec libellés de champs par module). Composants partagés `ConfirmDeleteDialog` et `Panel` / `InfoItem` / `UpcomingNotice`.
+- **Règle** : un composant client ne doit jamais importer de valeur depuis un fichier `server-only` (`queries.ts`) ; les types et fonctions utilitaires partagés vont dans `types.ts` (erreur rencontrée : visible uniquement au chargement de la page ou au build, pas au typecheck).
+- Les menus déroulants de filtre reçoivent leur libellé explicitement (`<SelectValue>{label}</SelectValue>`) : sinon Radix ne l'affiche qu'après l'hydratation (champ vide visible brièvement).
+
+### DT-028 — Isolation des suites E2E
+_14/11/2026 — validée_
+
+- Les suites qui créent des données (Clients, Projets) utilisent `isolatedUser()` (`tests/e2e/helpers/isolated-user.ts`) : un utilisateur et un espace propres au fichier, connectés une seule fois (storageState sous forme de fonction, lu après la connexion). Les suites en lecture seule (coquille) gardent la session partagée d'`auth.setup.ts`.
+- Cause : deux suites en parallèle sur le même espace faussaient les compteurs et les états vides.
+- Toute vérification d'un changement fait par une action serveur se fait après rechargement de la page (sinon le test peut se terminer avant l'enregistrement).

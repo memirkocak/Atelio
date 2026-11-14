@@ -12,10 +12,6 @@ export type ClientListItem = Pick<
   ClientRow,
   "id" | "kind" | "contact_name" | "company_name" | "email" | "phone" | "city" | "created_at"
 >;
-export type ActivityItem = Pick<
-  Database["public"]["Tables"]["activity_logs"]["Row"],
-  "id" | "action" | "changes" | "created_at" | "actor_id"
-> & { actorName: string | null };
 
 /**
  * Liste paginée des clients d'un espace (filtrée par la RLS ET par workspace_id).
@@ -60,6 +56,25 @@ export async function countClients(workspaceId: string): Promise<number> {
   return count ?? 0;
 }
 
+export type ClientOption = { id: string; label: string };
+
+/** Clients de l'espace pour une liste de choix (projets, devis), triés par libellé. */
+export async function listClientOptions(workspaceId: string): Promise<ClientOption[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("clients")
+    .select("id, kind, contact_name, company_name")
+    .eq("workspace_id", workspaceId)
+    .limit(1000);
+  if (error) throw error;
+  return (data ?? [])
+    .map((c) => ({
+      id: c.id,
+      label: c.kind === "company" && c.company_name ? c.company_name : c.contact_name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label, "fr"));
+}
+
 export async function getClient(workspaceId: string, clientId: string): Promise<ClientRow | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -72,25 +87,3 @@ export async function getClient(workspaceId: string, clientId: string): Promise<
   return data;
 }
 
-/** Historique d'un client (journal d'activité), du plus récent au plus ancien. */
-export async function getClientActivity(workspaceId: string, clientId: string): Promise<ActivityItem[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("activity_logs")
-    .select("id, action, changes, created_at, actor_id")
-    .eq("workspace_id", workspaceId)
-    .eq("entity_type", "client")
-    .eq("entity_id", clientId)
-    .order("created_at", { ascending: false })
-    .limit(50);
-  if (error) throw error;
-
-  const actorIds = [...new Set((data ?? []).map((l) => l.actor_id).filter((id): id is string => !!id))];
-  const names = new Map<string, string | null>();
-  if (actorIds.length > 0) {
-    const { data: profiles } = await supabase.from("profiles").select("id, full_name").in("id", actorIds);
-    for (const p of profiles ?? []) names.set(p.id, p.full_name);
-  }
-
-  return (data ?? []).map((l) => ({ ...l, actorName: l.actor_id ? (names.get(l.actor_id) ?? null) : null }));
-}

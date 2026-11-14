@@ -12,7 +12,7 @@ Chaque phase n'est terminée que lorsque ses critères sont vérifiés (typechec
 | 3 | Authentification | Projets Supabase dev/prod, clients Supabase, `proxy.ts`, inscription, connexion, déconnexion, mot de passe oublié | Parcours complets testés (E2E) ; routes protégées | ✅ |
 | 4 | Base & espaces | Migrations profiles / workspaces / members, triggers, fonctions RLS, création auto de l'espace, types générés | Tests RLS : aucune fuite entre deux espaces | ✅ |
 | 5 | Clients | Migration, CRUD, recherche, filtres, fiche client | CRUD + RLS + E2E | ✅ |
-| 6 | Projets | Migration, CRUD, statuts, budget, avancement, vue tableau + Kanban | CRUD + Kanban + RLS + E2E | ⚪ |
+| 6 | Projets | Migration, CRUD, statuts, budget, avancement, vue tableau + Kanban | CRUD + Kanban + RLS + E2E | ✅ |
 | 7 | Tâches | Migration, CRUD, priorités, retards, filtres | CRUD + filtres + RLS + E2E | ⚪ |
 | 8 | Devis & PDF | Migration, RPC de calcul, numérotation, instantané, statuts, PDF | Tests de calcul (TS = SQL), PDF correct (accents, €), RLS + E2E | ⚪ |
 | 9 | Tableau de bord | KPI réels, graphiques, activité récente (activity_logs) | Valeurs vérifiées contre la base | ⚪ |

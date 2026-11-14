@@ -85,7 +85,10 @@ export function ClientsToolbar() {
       <div className="grid grid-cols-2 gap-2 sm:flex">
         <Select value={type} onValueChange={(v) => update({ type: v === ALL ? null : v })}>
           <SelectTrigger aria-label="Filtrer par type" className="w-full bg-background sm:w-40">
-            <SelectValue />
+            {/* Libellé fourni : évite un champ vide avant l'hydratation */}
+            <SelectValue>
+              {type === ALL ? "Tous les types" : CLIENT_KIND_LABELS[type as ClientKind]}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL}>Tous les types</SelectItem>
@@ -99,7 +102,7 @@ export function ClientsToolbar() {
 
         <Select value={sort} onValueChange={(v) => update({ sort: v === "recent" ? null : v })}>
           <SelectTrigger aria-label="Trier" className="w-full bg-background sm:w-44">
-            <SelectValue />
+            <SelectValue>{CLIENT_SORTS[sort] ?? CLIENT_SORTS.recent}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {(Object.keys(CLIENT_SORTS) as ClientSort[]).map((s) => (

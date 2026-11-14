@@ -147,6 +147,75 @@ export type Database = {
         }
         Relationships: []
       }
+      projects: {
+        Row: {
+          budget_cents: number | null
+          client_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          name: string
+          progress: number
+          search_text: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["project_status"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          budget_cents?: number | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          name: string
+          progress?: number
+          search_text?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          budget_cents?: number | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          name?: string
+          progress?: number
+          search_text?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_same_workspace"
+            columns: ["client_id", "workspace_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id", "workspace_id"]
+          },
+          {
+            foreignKeyName: "projects_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members: {
         Row: {
           created_at: string
@@ -224,6 +293,12 @@ export type Database = {
     }
     Enums: {
       client_kind: "company" | "individual"
+      project_status:
+        | "upcoming"
+        | "in_progress"
+        | "on_hold"
+        | "completed"
+        | "cancelled"
       workspace_role: "owner" | "admin" | "member"
     }
     CompositeTypes: {
@@ -353,6 +428,13 @@ export const Constants = {
   public: {
     Enums: {
       client_kind: ["company", "individual"],
+      project_status: [
+        "upcoming",
+        "in_progress",
+        "on_hold",
+        "completed",
+        "cancelled",
+      ],
       workspace_role: ["owner", "admin", "member"],
     },
   },

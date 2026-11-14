@@ -131,7 +131,7 @@ Toutes les tables métier ont `id uuid`, `workspace_id uuid not null`, `created_
 
 **Montants** : `bigint` en centimes ; TVA en points de base (2000 = 20 %) ; arrondi au centime par ligne.
 
-**État d'implémentation** : `profiles`, `workspaces`, `workspace_members` (migration 0001, DT-022) ; `clients` et `activity_logs` (migration 0002, DT-024 / DT-025) ; droits `service_role` (migration 0003). Écarts avec le tableau ci-dessus : `clients` a une colonne `kind`, des noms `contact_name` / `company_name`, une adresse structurée (`address_line`, `postal_code`, `city`, `country`) et une colonne générée `search_text` ; `activity_logs` stocke `summary` et `changes` (champs modifiés) au lieu de `metadata`. Les autres tables arrivent avec leurs modules (phases 6 à 10), chacune avec sa migration et ses tests RLS.
+**État d'implémentation** : `profiles`, `workspaces`, `workspace_members` (migration 0001, DT-022) ; `clients` et `activity_logs` (migration 0002, DT-024 / DT-025) ; droits `service_role` (migration 0003) ; `projects` (migration 0004, DT-027 : clé étrangère composite vers `clients`, `completed_at` géré par trigger, `search_text`). Écarts avec le tableau ci-dessus : `clients` a une colonne `kind`, des noms `contact_name` / `company_name`, une adresse structurée (`address_line`, `postal_code`, `city`, `country`) et une colonne générée `search_text` ; `activity_logs` stocke `summary` et `changes` (champs modifiés) au lieu de `metadata`. Les autres tables arrivent avec leurs modules (phases 6 à 10), chacune avec sa migration et ses tests RLS.
 
 ## 6. Sécurité
 

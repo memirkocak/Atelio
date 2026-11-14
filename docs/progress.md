@@ -7,9 +7,10 @@
 - **Phase 2 — Design global** : terminée.
 - **Phase 3 — Authentification** : terminée.
 - **Phase 4 — Base de données et espaces** : terminée.
-- **Phase 5 — Clients** : terminée. Liste (recherche sans accents, filtre, tri, pagination), création / modification en panneau latéral, suppression confirmée, fiche client avec historique ; journal d'activité générique.
-- Base de dev : un seul compte, celui de l'utilisateur (aucun compte de test restant).
-- Aperçu local : `npm run dev`, se connecter puis ouvrir Clients.
+- **Phase 5 — Clients** : terminée.
+- **Phase 6 — Projets** : terminée. Vue tableau et vue Kanban (glisser-déposer), budget, dates, retard, avancement, fiche projet avec historique, projets affichés sur la fiche client.
+- Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
+- GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
 ## Historique des sessions
 
@@ -129,6 +130,23 @@
 | `npm run test:e2e` | ✅ 25/25 (dont 8 clients + boucle de redirection) ; un passage interrompu par une mise en veille du PC, relancé sans erreur |
 | Navigateur | ✅ liste (1440 px), fiche, liste en cartes et panneau (375 px), aucune erreur console |
 
+#### Tâche 7 — Module Projets (phase 6)
+- Migration 0004 (`projects`, clé étrangère composite, `completed_at`, journal) appliquée après `--dry-run` ; types régénérés.
+- `src/features/projects/` (constantes, statut/retard, types partagés, schémas, requêtes, actions, composants : formulaire, panneau, tableau, Kanban, barre d'outils, fiche) ; `src/features/activity/` (journal partagé) ; `src/lib/money.ts`, `src/lib/dates.ts` ; composants partagés `ConfirmDeleteDialog`, `Panel`.
+- Fiche client : projets du client, bouton « Nouveau projet » prérempli, avertissement « N projets seront détachés ».
+- Dépendance : `@dnd-kit/core` 6.3.1 (prévue en DT-013).
+- Problèmes rencontrés et corrigés : requête Supabase exécutée trop tôt (`await` sur le constructeur de requête) ; import d'un module `server-only` par le Kanban (types déplacés dans `types.ts`) ; suites E2E qui partageaient le même espace (isolation, DT-028) ; test terminé avant l'enregistrement serveur ; libellé de filtre vide avant hydratation.
+- Décisions DT-027 et DT-028.
+
+**Vérifications (tâche 7)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 76/76 (dont 30 projets / argent / dates) |
+| `npm run test:rls` | ✅ 44/44 (dont 13 projets : isolation, client d'un autre espace refusé, `completed_at`, contraintes, détachement) |
+| `npm run test:e2e` | ✅ 33/33 sur trois passages consécutifs (dont 8 projets : création, validation, glisser-déposer Kanban, menu de statut, filtres, fiche, détachement, suppression, mobile, 404) |
+| Navigateur | ✅ tableau et Kanban (1440 px), Kanban défilant en mobile (375 px) |
+
 ## Prochaine étape
 
-**Phase 6 — Projets** : migration `projects` (client facultatif, statut, budget, dates, avancement) + RLS + journal, vue tableau, vue Kanban (glisser-déposer entre statuts), fiche projet, et affichage des projets dans la fiche client. À présenter en détail avant exécution.
+**Phase 7 — Tâches** : migration `tasks` (projet facultatif du même espace, priorité, échéance, statut, date de fin) + RLS + journal, liste avec filtres (statut, priorité, projet, échéance) et mise en évidence des retards, case « terminée » en un clic, tâches affichées sur la fiche projet. À présenter en détail avant exécution.
