@@ -48,7 +48,8 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 
 ## Infrastructure
 
-- Supabase cloud, plan gratuit, **deux projets** : `atelio-dev` (développement + tests RLS) et `atelio-prod` (production, données propres).
+- Supabase cloud, plan gratuit, **deux projets** : dev = « Atelio » (ref `sngvhoygizlvxwwqnsyi`, lié à la CLI ; développement + tests) et `atelio-prod` (production, créé en phase 12).
+- Session : toujours lue dans une frontière `<Suspense>` via `requireUser()` / `getCurrentUser()` (`src/lib/auth/session.ts`), qui appellent `connection()` puis `getClaims()`.
 - Toute modification du schéma passe par une migration SQL versionnée dans `supabase/migrations/`, appliquée d'abord sur dev, puis sur prod.
 - Les secrets (mot de passe BDD, clés, tokens) sont saisis **par l'utilisateur** dans `.env.local` ou via `npx supabase login`. Ils ne transitent jamais par le chat et ne sont jamais committés.
 
@@ -81,6 +82,9 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 | `npm test` | Tests unitaires Vitest (`tests/unit`, `src/**/*.test.ts(x)`) |
 | `npm run test:e2e` | Tests Playwright (`tests/e2e`, Chromium, démarre `npm run dev` automatiquement) |
 | `npx shadcn@4.23.0 add <composant>` | Ajouter un composant shadcn/ui (base Radix) |
+| `npx supabase config diff` / `config push` | Comparer puis appliquer `supabase/config.toml` au projet lié (toujours relire le diff avant) |
+
+Les tests E2E utilisent le projet Supabase de dev (clés dans `.env.local`) et suppriment leurs comptes `e2e-…@example.com` à la fin.
 
 Vérification complète avant de déclarer une tâche terminée : `npm run typecheck && npm run lint && npm test && npm run build`, puis `npm run test:e2e` et contrôle visuel.
 

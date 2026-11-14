@@ -4,9 +4,10 @@
 
 - **Phase 0 — Cadrage** : terminée (dépôt GitHub en attente, B-010).
 - **Phase 1 — Initialisation** : terminée.
-- **Phase 2 — Design global** : terminée. Coquille navigable (sidebar, topbar, menu mobile), 8 pages de modules vides, page d'accueil simple, 404 et page d'erreur.
-- Aucune fonctionnalité métier, aucune connexion Supabase pour l'instant. Les pages `/w/<espace>/…` sont accessibles sans connexion (local uniquement) jusqu'aux phases 3-4.
-- Aperçu local : `npm run dev` puis http://localhost:3000/w/demo/tableau-de-bord
+- **Phase 2 — Design global** : terminée.
+- **Phase 3 — Authentification** : terminée. Inscription, connexion, déconnexion, mot de passe oublié / réinitialisation, routes protégées, menu du compte, page temporaire `/demarrage`. Projet Supabase de dev « Atelio » relié.
+- Aucune table métier pour l'instant ; les pages `/w/<espace>/…` exigent une connexion mais aucun espace n'existe encore (phase 4).
+- Aperçu local : `npm run dev`, créer un compte sur http://localhost:3000/inscription
 
 ## Historique des sessions
 
@@ -65,6 +66,29 @@
 | `npm run test:e2e` | ✅ 7/7 : redirection, navigation des 8 modules + page active + titres, sidebar repliable, tablette repliée par défaut, menu mobile, accueil, 404 |
 | Navigateur | ✅ 1440, 1024 et 375 px, pas de défilement horizontal, aucune erreur console |
 
+### Session 2 — 14/11/2026
+
+#### Tâche 4 — Authentification (phase 3)
+- Projet Supabase de dev créé par l'utilisateur (« Atelio », eu-west-2) ; clés dans `.env.local` (format et accès vérifiés sans les afficher) ; CLI connectée et liée.
+- Dépendances : `@supabase/supabase-js` 2.119, `@supabase/ssr` 0.12.7, `supabase` (CLI) 3.1.0, `react-hook-form`, `zod`, `@hookform/resolvers`, `server-only` ; composants shadcn `label`, `field`, `alert`, `dropdown-menu`, `avatar`.
+- Code : `src/lib/env.ts`, `src/lib/supabase/{client,server,admin,proxy}.ts`, `src/proxy.ts`, `src/lib/auth/{session,redirect,routes,errors}.ts`, `src/lib/action-result.ts`, `src/lib/initials.ts`, `src/features/auth/` (schémas, actions, formulaires, menu du compte), pages `(auth)/…`, `/auth/confirm`, `/demarrage` ; boutons de la page d'accueil.
+- Configuration Supabase : `supabase/config.toml` (4 réglages d'auth poussés après revue du diff), modèles d'e-mails français préparés mais non applicables sur le plan gratuit.
+- Corrections : erreur `Date.now()` au pré-rendu (ajout de `connection()`), journalisation des mots de passe en dev désactivée, déconnexion du menu via formulaire.
+- Décisions DT-019 à DT-021 ; DT-015 confirmée.
+
+**Vérifications (tâche 4)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 33/33 (redirections sûres, routes, schémas, erreurs, initiales, navigation, StatusBadge) |
+| `npm run test:e2e` | ✅ 15/15 dont inscription → déconnexion → connexion, mauvais mot de passe, retour à la page demandée, menu du compte, lien invalide, coquille connectée ; 27/27 sur deux passages |
+| Navigateur | ✅ connexion / inscription / démarrage sur ordinateur et mobile, erreurs de validation en français, aucune erreur console |
+
+**Points ouverts**
+- Modèles d'e-mails français : nécessitent un SMTP personnalisé (B-036, phase 12).
+- Projet de dev nommé « Atelio » et situé à Londres (pas d'impact).
+- Dépôt GitHub toujours à créer (B-010).
+
 ## Prochaine étape
 
-**Phase 3 — Authentification (B-030 à B-034)** : création guidée des projets Supabase `atelio-dev` et `atelio-prod`, configuration de la CLI, clients Supabase, `proxy.ts`, pages connexion / inscription / mot de passe oublié, tests E2E. Nécessite des actions de l'utilisateur (création des projets, saisie des clés). À présenter en détail avant exécution.
+**Phase 4 — Base de données et espaces de travail (B-040 à B-044)** : première migration SQL (profiles, workspaces, workspace_members), triggers de création automatique du profil et de l'espace à l'inscription, fonctions et politiques RLS, types TypeScript générés, tests RLS à deux utilisateurs, contrôle d'appartenance dans `/w/[slug]` et redirection de `/demarrage` vers l'espace. À présenter en détail avant exécution.

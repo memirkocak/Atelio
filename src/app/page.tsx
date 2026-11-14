@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   BarChart3,
   CalendarDays,
   FileText,
@@ -7,10 +8,12 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 import { Brand } from "@/components/layout/brand";
+import { Button } from "@/components/ui/button";
 
-// Version simple (phase 2). Version finale avec captures et accès démo en phase 12.
+// Version simple (phases 2-3). Version finale avec captures et accès démo en phase 12.
 
 const modules: { icon: LucideIcon; title: string; description: string }[] = [
   {
@@ -49,8 +52,16 @@ export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <header className="border-b">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center px-4 md:px-6">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
           <Brand />
+          <nav className="flex items-center gap-2" aria-label="Compte">
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/connexion">Se connecter</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/inscription">Créer un compte</Link>
+            </Button>
+          </nav>
         </div>
       </header>
 
@@ -68,6 +79,17 @@ export default function Home() {
               Atelio réunit vos clients, projets, tâches, devis et rendez-vous dans une interface
               claire, pensée pour les indépendants, les TPE et les agences.
             </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <Link href="/inscription">
+                  Créer un compte
+                  <ArrowRight aria-hidden />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/connexion">Se connecter</Link>
+              </Button>
+            </div>
           </div>
         </section>
 

@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+import { AUTH_STATE_FILE } from "./helpers/auth-state";
+
+// La coquille applicative est réservée aux utilisateurs connectés.
+test.use({ storageState: AUTH_STATE_FILE });
+
 const modules = [
   { title: "Tableau de bord", path: "tableau-de-bord" },
   { title: "Clients", path: "clients" },

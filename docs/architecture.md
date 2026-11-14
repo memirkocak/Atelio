@@ -39,7 +39,8 @@ Navigateur ─┤ Next.js : Server Components, Server Actions,    │
               └───────────────────────────┘
 ```
 
-- **Deux projets Supabase gratuits** : `atelio-dev` et `atelio-prod`. Pas de Docker.
+- **Deux projets Supabase gratuits**, sans Docker : développement = projet « Atelio » (ref `sngvhoygizlvxwwqnsyi`, eu-west-2), production = `atelio-prod` (créé en phase 12, région Paris).
+- Réglages d'authentification versionnés dans `supabase/config.toml`, appliqués avec `npx supabase config push` (voir DT-019).
 - Migrations écrites dans `supabase/migrations/`, appliquées avec `npx supabase db push` (dev d'abord, prod ensuite).
 - Types TypeScript générés : `npx supabase gen types typescript --linked > src/types/database.types.ts`.
 - **Cron Vercel quotidien** : requête légère (maintien actif du projet Supabase gratuit) + réinitialisation des données du compte démo.
@@ -54,6 +55,15 @@ Navigateur ─┤ Next.js : Server Components, Server Actions,    │
 6. **Journal d'activité par triggers Postgres** sur les tables métier.
 7. **Espace actif dans l'URL** : `/w/[slug]/…`. Le layout vérifie l'appartenance à chaque requête.
 8. **Clé secrète** uniquement dans `src/lib/supabase/admin.ts` (`import "server-only"`), pour seed et reset démo.
+
+### Flux d'authentification (phase 3)
+
+```
+Inscription / connexion ─► Server Action (Zod) ─► Supabase Auth ─► cookies de session
+Lien reçu par e-mail ─► /auth/confirm (token_hash ou code PKCE) ─► session ─► ?next=
+Chaque requête ─► proxy.ts : rafraîchit la session, redirige selon l'accès
+Rendu protégé ─► <Suspense> ─► requireUser() : connection() + getClaims()
+```
 
 ## 4. Arborescence
 

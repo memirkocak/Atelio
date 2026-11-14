@@ -99,11 +99,11 @@ _13/11/2026 — validée_
 - React Compiler **non activé** pour l'instant ; Playwright limité à **Chromium** (Firefox / WebKit avant la mise en ligne).
 
 ### DT-015 — Configuration Next.js 16 par défaut conservée
-_13/11/2026 — à confirmer en phase 3_
+_13/11/2026 — confirmée en phase 3 (14/11/2026)_
 
 - Le gabarit officiel `create-next-app@16.4.6` active `cacheComponents` et `partialPrefetching`, et utilise le loader `@tailwindcss/turbopack` (pas de PostCSS).
 - **Décision** : conserver ces valeurs par défaut officielles.
-- **Conséquence** : les pages lisant des données dynamiques (cookies de session Supabase) devront placer ces accès dans des frontières `<Suspense>` ; à valider avec la doc embarquée (`node_modules/next/dist/docs/`) lors de l'intégration de l'authentification. Si c'est trop contraignant, la désactivation sera discutée et consignée ici.
+- **Conséquence** : les lectures de session (cookies) sont placées dans des frontières `<Suspense>`, jamais au niveau d'un layout. Compatible avec l'authentification Supabase, à condition d'appeler `await connection()` avant la lecture de session (voir DT-020).
 - `typecheck` exécute `next typegen` avant `tsc`, car les types globaux `LayoutProps` / `PageProps` sont générés.
 
 ### DT-016 — Vulnérabilités npm audit des outils de développement
@@ -131,4 +131,34 @@ _13/11/2026 — validée_
 - Avec `cacheComponents`, les composants lisant l'URL (`useParams`, `usePathname`) sont dans des frontières `<Suspense>` ; les pages des modules sont pré-rendues partiellement (◐ au build). Le layout `/w/[slug]` ne lit pas `params`.
 - `/w/<slug>` redirige vers `/w/<slug>/tableau-de-bord` (redirection `next.config.ts`).
 - Composants shadcn retouchés : libellés d'accessibilité traduits (sidebar, sheet, breadcrumb) ; `use-mobile.ts` réécrit sur `useMediaQuery` et largeur de `SidebarMenuSkeleton` rendue déterministe (règles `react-hooks` de React 19).
-- **Temporaire** : les pages `/w/[slug]/…` sont accessibles sans connexion (local uniquement) jusqu'aux phases 3 et 4.
+- ~~Temporaire : les pages `/w/[slug]/…` sont accessibles sans connexion~~ → protégées depuis la phase 3 (DT-020) ; contrôle d'appartenance à l'espace en phase 4.
+
+### DT-019 — Projet Supabase de développement et configuration de l'authentification
+_14/11/2026 — validée_
+
+- Projet de développement : **« Atelio »** (ref `sngvhoygizlvxwwqnsyi`), région **eu-west-2 (Londres)**, plan gratuit. Le projet de production (`atelio-prod`, région Paris) sera créé en phase 12.
+- CLI Supabase en dépendance de développement (`supabase@3.1.0`), utilisée via `npx supabase`, liée au projet (`supabase link`).
+- Configuration de l'authentification versionnée dans `supabase/config.toml` et appliquée par `npx supabase config push` après revue de `npx supabase config diff`. Les réglages hors authentification sont alignés sur les valeurs du projet distant pour que `push` ne modifie rien d'autre.
+- Réglages appliqués : URLs de redirection `http://localhost:3000/**`, mot de passe de 8 caractères minimum avec lettres et chiffres, **confirmation par e-mail désactivée sur le projet de dev** (tests automatisés ; le SMTP gratuit n'envoie qu'aux membres de l'équipe). Elle sera **activée en production**.
+- **Modèles d'e-mails en français** (`supabase/templates/`) : prêts mais **non appliqués**, car le plan gratuit refuse leur modification avec le SMTP par défaut (`entitlement_required`). À activer avec un SMTP personnalisé (Resend) en phase 12. En attendant, les e-mails par défaut (anglais) fonctionnent : leurs liens arrivent sur `/auth/confirm` avec un `code` PKCE.
+
+### DT-020 — Architecture de l'authentification
+_14/11/2026 — validée_
+
+- **Clés Supabase** : `sb_publishable_…` (navigateur et serveur, soumise à la RLS) et `sb_secret_…` (serveur uniquement : `src/lib/supabase/admin.ts`, `server-only`, utilisée par les tests pour créer et supprimer des comptes).
+- **Proxy** (`src/proxy.ts`) : rafraîchit la session à chaque requête, redirige les visiteurs non connectés de `/w/*`, `/demarrage` et `/reinitialiser-mot-de-passe` vers `/connexion?next=…`, et les utilisateurs connectés hors des pages de connexion et d'inscription.
+- **Vérification serveur** : `getCurrentUser()` / `requireUser()` (`src/lib/auth/session.ts`) via `getClaims()`, jamais `getSession()`. Le menu du compte de la sidebar sert aussi de garde côté serveur.
+- **`await connection()` avant la lecture de session** : avec `partialPrefetching`, Next pré-rend avec les cookies disponibles, et Supabase lit l'heure (expiration du JWT), ce qui provoquait une erreur « Date.now() pendant le pré-rendu » et bloquait l'interactivité du menu.
+- `getClaims()` vérifie la signature du JWT localement : une session reste valide jusqu'à son expiration (1 h) même si le compte est supprimé. L'accès aux données reste protégé par la RLS (phase 4).
+- **Écritures** via Server Actions (`src/features/auth/actions.ts`) : validation Zod côté serveur, erreurs traduites en français sans exposer les messages techniques (`src/lib/auth/errors.ts`).
+- **Sécurité** : paramètre `next` filtré contre les redirections ouvertes (`safeNextPath`) ; message de connexion générique ; réponse neutre pour « mot de passe oublié » et pour l'inscription avec confirmation (pas d'énumération des comptes) ; `logging.serverFunctions: false` dans `next.config.ts` pour ne pas écrire les mots de passe dans les journaux de développement.
+- La déconnexion passe par un `<form action={signOut}>` (plus fiable qu'un appel dans un gestionnaire de menu).
+- `/demarrage` est une page temporaire jusqu'à la création des espaces (phase 4).
+
+### DT-021 — Tests E2E authentifiés
+_14/11/2026 — validée_
+
+- Les tests E2E utilisent le projet Supabase de dev (`.env.local` chargé par `playwright.config.ts`).
+- Projet Playwright `setup` (`tests/e2e/auth.setup.ts`) : crée un compte confirmé via l'API d'administration, se connecte et enregistre la session (`playwright/.auth/`, ignoré par Git), réutilisée par les tests de la coquille.
+- Comptes de test `e2e-…@example.com`, supprimés par `tests/e2e/global-teardown.ts`.
+- L'envoi réel d'e-mails n'est pas testé (quota du SMTP gratuit).

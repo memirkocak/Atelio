@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import {
   Sidebar,
@@ -34,7 +34,7 @@ import {
  * les parties qui la lisent sont placées dans <Suspense>, le reste de la coquille
  * est pré-rendu statiquement.
  */
-export function AppSidebar() {
+export function AppSidebar({ userMenu }: { userMenu: ReactNode }) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="h-14 justify-center border-b border-sidebar-border">
@@ -57,6 +57,7 @@ export function AppSidebar() {
         <Suspense fallback={<NavMenuSkeleton count={secondaryNavItems.length} />}>
           <NavMenu items={secondaryNavItems} />
         </Suspense>
+        {userMenu}
       </SidebarFooter>
 
       <SidebarRail />

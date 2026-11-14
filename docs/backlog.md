@@ -35,11 +35,13 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 
 | ID | Tâche | Statut |
 |---|---|---|
-| B-030 | Créer les projets Supabase `atelio-dev` et `atelio-prod` — **guidé, par l'utilisateur** | ⚪ |
-| B-031 | `.env.example`, `npx supabase init`, liaison au projet dev (`supabase login` par l'utilisateur) | ⚪ |
-| B-032 | Clients Supabase `server.ts`, `client.ts`, `proxy.ts`, `admin.ts` | ⚪ |
-| B-033 | Pages connexion, inscription, mot de passe oublié, réinitialisation ; callback | ⚪ |
-| B-034 | Tests E2E du parcours d'authentification | ⚪ |
+| B-030 | Créer le projet Supabase de dev (« Atelio ») — par l'utilisateur. `atelio-prod` reporté en phase 12 | ✅ |
+| B-031 | `.env.example`, `npx supabase init`, connexion et liaison de la CLI | ✅ |
+| B-032 | Clients Supabase `server.ts`, `client.ts`, `proxy.ts`, `admin.ts` ; `src/proxy.ts` ; session serveur | ✅ |
+| B-033 | Pages connexion, inscription, mot de passe oublié, réinitialisation ; `/auth/confirm` ; menu du compte ; `/demarrage` | ✅ |
+| B-034 | Tests unitaires et E2E du parcours d'authentification | ✅ |
+| B-035 | Configuration de l'auth en code (`config.toml` + `config push`) | ✅ |
+| B-036 | Activer les modèles d'e-mails français avec un SMTP personnalisé (Resend) | ⏸️ phase 12 |
 
 ## Phase 4 — Base de données et espaces
 

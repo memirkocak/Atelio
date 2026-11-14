@@ -1,8 +1,23 @@
-import { AppShell } from "@/components/layout/app-shell";
+import { Suspense } from "react";
 
-// Phase 2 : coquille sans authentification (local uniquement).
-// Le contrôle de session et d'appartenance à l'espace arrive en phases 3 et 4.
-// Avec cacheComponents, `params` n'est pas lu ici : la sidebar lit l'espace via useParams().
+import { AppShell } from "@/components/layout/app-shell";
+import { SidebarMenuSkeleton } from "@/components/ui/sidebar";
+import { UserMenu } from "@/features/auth/components/user-menu";
+
+// Accès réservé aux utilisateurs connectés : proxy.ts redirige, et UserMenu vérifie
+// la session côté serveur. Le contrôle d'appartenance à l'espace arrive en phase 4.
+// Avec cacheComponents, ni `params` ni la session ne sont lus au niveau du layout :
+// ces lectures sont isolées dans des frontières <Suspense>.
 export default function WorkspaceLayout({ children }: LayoutProps<"/w/[slug]">) {
-  return <AppShell>{children}</AppShell>;
+  return (
+    <AppShell
+      userMenu={
+        <Suspense fallback={<SidebarMenuSkeleton showIcon className="h-12" />}>
+          <UserMenu />
+        </Suspense>
+      }
+    >
+      {children}
+    </AppShell>
+  );
 }
