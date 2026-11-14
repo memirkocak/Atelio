@@ -5,9 +5,10 @@
 - **Phase 0 — Cadrage** : terminée (dépôt GitHub en attente, B-010).
 - **Phase 1 — Initialisation** : terminée.
 - **Phase 2 — Design global** : terminée.
-- **Phase 3 — Authentification** : terminée. Inscription, connexion, déconnexion, mot de passe oublié / réinitialisation, routes protégées, menu du compte, page temporaire `/demarrage`. Projet Supabase de dev « Atelio » relié.
-- Aucune table métier pour l'instant ; les pages `/w/<espace>/…` exigent une connexion mais aucun espace n'existe encore (phase 4).
-- Aperçu local : `npm run dev`, créer un compte sur http://localhost:3000/inscription
+- **Phase 3 — Authentification** : terminée.
+- **Phase 4 — Base de données et espaces** : terminée. Migration 0001 appliquée sur le projet de dev ; chaque inscription crée profil + espace + rôle propriétaire ; RLS testée (18 tests) ; accès à un espace contrôlé (404 sinon) ; nom de l'espace dans la sidebar.
+- Base de dev vide (tous les comptes de test supprimés).
+- Aperçu local : `npm run dev`, créer un compte sur http://localhost:3000/inscription → arrivée dans son espace.
 
 ## Historique des sessions
 
@@ -89,6 +90,27 @@
 - Projet de dev nommé « Atelio » et situé à Londres (pas d'impact).
 - Dépôt GitHub toujours à créer (B-010).
 
+#### Tâche 5 — Base de données et espaces de travail (phase 4)
+- Migration `20261114065237_workspaces.sql` : tables, enum, triggers, schéma `private`, droits par colonne, RLS ; aperçu `--dry-run` puis application (`db push --remote`).
+- Types générés `src/types/database.types.ts` ; clients Supabase typés ; scripts `db:push`, `db:types`, `test:rls`.
+- Tests : `vitest.rls.config.mts`, `tests/rls/workspaces.test.ts`, utilitaires partagés `tests/support/supabase-test.ts` (nettoyage des comptes ET de leurs espaces).
+- Application : `src/features/workspaces/` (requêtes, `WorkspaceGate`, `WorkspaceName`), `/demarrage` en Route Handler, redirections directes vers l'espace dans les actions d'auth, nom de l'espace dans la sidebar.
+- Corrections : `connection()` déplacé dans le client serveur ; `id` des champs via `useId()` (doublons entre pages conservées par Next) ; sélecteurs E2E limités aux éléments visibles ; un serveur de dev orphelin arrêté.
+- Décisions DT-022 et DT-023.
+
+**Vérifications (tâche 5)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 33/33 |
+| `npm run test:rls` | ✅ 18/18 : création auto, isolation A/B (liste, id, slug, membres), modifications interdites, colonnes protégées, contraintes, profils, membre simple, anonyme, fonctions privées |
+| `npm run test:e2e` | ✅ 16/16, et 31/31 sur deux passages : inscription → arrivée dans « Espace de Alex », 404 sur l'espace d'un autre / inconnu, retour à la page demandée, coquille connectée |
+| Navigateur | ✅ connexion → `/w/espace-de-camille-…/tableau-de-bord`, nom de l'espace et menu du compte corrects, aucune erreur console (captures impossibles : fenêtre masquée) |
+
+**Points ouverts**
+- Espaces orphelins après suppression d'un compte : à traiter avec la suppression de compte (B-045, phase 11).
+- Dépôt GitHub toujours à créer (B-010).
+
 ## Prochaine étape
 
-**Phase 4 — Base de données et espaces de travail (B-040 à B-044)** : première migration SQL (profiles, workspaces, workspace_members), triggers de création automatique du profil et de l'espace à l'inscription, fonctions et politiques RLS, types TypeScript générés, tests RLS à deux utilisateurs, contrôle d'appartenance dans `/w/[slug]` et redirection de `/demarrage` vers l'espace. À présenter en détail avant exécution.
+**Phase 5 — Clients (CRM)** : migration `clients` (rattachée à l'espace) + RLS + tests, liste avec recherche et filtres, création / modification / suppression (bloquée si devis liés, plus tard), fiche client. À présenter en détail avant exécution.

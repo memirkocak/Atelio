@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useId } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -20,6 +21,7 @@ import { SubmitButton } from "./submit-button";
 import { useServerActionForm } from "./use-server-action-form";
 
 export function ResetPasswordForm() {
+  const uid = useId();
   const form = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: { password: "", confirmPassword: "" },
@@ -32,9 +34,9 @@ export function ResetPasswordForm() {
       <FieldGroup>
         <FormError message={error} />
         <Field data-invalid={!!errors.password}>
-          <FieldLabel htmlFor="password">Nouveau mot de passe</FieldLabel>
+          <FieldLabel htmlFor={`${uid}-password`}>Nouveau mot de passe</FieldLabel>
           <PasswordInput
-            id="password"
+            id={`${uid}-password`}
             autoComplete="new-password"
             aria-invalid={!!errors.password}
             {...form.register("password")}
@@ -43,9 +45,9 @@ export function ResetPasswordForm() {
           <FieldError errors={[errors.password]} />
         </Field>
         <Field data-invalid={!!errors.confirmPassword}>
-          <FieldLabel htmlFor="confirmPassword">Confirmer le mot de passe</FieldLabel>
+          <FieldLabel htmlFor={`${uid}-confirmPassword`}>Confirmer le mot de passe</FieldLabel>
           <PasswordInput
-            id="confirmPassword"
+            id={`${uid}-confirmPassword`}
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}
             {...form.register("confirmPassword")}

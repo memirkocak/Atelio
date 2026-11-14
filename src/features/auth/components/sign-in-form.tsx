@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useId } from "react";
 import { useForm } from "react-hook-form";
 
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -18,9 +19,11 @@ import { useServerActionForm } from "./use-server-action-form";
 
 const LINK_ERRORS: Record<string, string> = {
   "lien-invalide": "Ce lien est invalide ou a expiré. Connectez-vous ou faites une nouvelle demande.",
+  "aucun-espace": "Aucun espace de travail n’est associé à ce compte. Contactez le support.",
 };
 
 export function SignInForm() {
+  const uid = useId();
   const searchParams = useSearchParams();
   const next = searchParams.get("next");
   const linkError = LINK_ERRORS[searchParams.get("erreur") ?? ""] ?? null;
@@ -38,9 +41,9 @@ export function SignInForm() {
         <FormError message={error ?? linkError} />
 
         <Field data-invalid={!!errors.email}>
-          <FieldLabel htmlFor="email">Adresse e-mail</FieldLabel>
+          <FieldLabel htmlFor={`${uid}-email`}>Adresse e-mail</FieldLabel>
           <Input
-            id="email"
+            id={`${uid}-email`}
             type="email"
             autoComplete="email"
             aria-invalid={!!errors.email}
@@ -51,7 +54,7 @@ export function SignInForm() {
 
         <Field data-invalid={!!errors.password}>
           <div className="flex items-center justify-between">
-            <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+            <FieldLabel htmlFor={`${uid}-password`}>Mot de passe</FieldLabel>
             <Link
               href="/mot-de-passe-oublie"
               className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
@@ -60,7 +63,7 @@ export function SignInForm() {
             </Link>
           </div>
           <PasswordInput
-            id="password"
+            id={`${uid}-password`}
             autoComplete="current-password"
             aria-invalid={!!errors.password}
             {...form.register("password")}

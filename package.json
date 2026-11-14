@@ -13,7 +13,10 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:types": "supabase gen types typescript --remote --schema public > src/types/database.types.ts",
+    "db:push": "supabase db push --remote",
+    "test:rls": "vitest run --config vitest.rls.config.mts"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.6",

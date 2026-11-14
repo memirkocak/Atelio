@@ -1,7 +1,6 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
-import { connection } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,10 +15,7 @@ export type CurrentUser = {
  * Lit les cookies : à appeler dans une frontière <Suspense> (cacheComponents).
  */
 export async function getCurrentUser(): Promise<CurrentUser | null> {
-  // La validité d'une session dépend de l'heure courante (expiration du JWT) :
-  // elle doit être évaluée au moment de la requête, jamais lors d'un pré-rendu
-  // (y compris le pré-rendu avec cookies de partialPrefetching).
-  await connection();
+  // createClient() appelle connection() : la session est évaluée au moment de la requête.
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const claims = data?.claims;

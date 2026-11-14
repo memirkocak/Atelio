@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useId } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -22,6 +22,7 @@ import { SubmitButton } from "./submit-button";
 import { useServerActionForm } from "./use-server-action-form";
 
 export function SignUpForm() {
+  const uid = useId();
   const [sentTo, setSentTo] = useState<string | null>(null);
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
@@ -47,9 +48,9 @@ export function SignUpForm() {
         <FormError message={error} />
 
         <Field data-invalid={!!errors.fullName}>
-          <FieldLabel htmlFor="fullName">Nom complet</FieldLabel>
+          <FieldLabel htmlFor={`${uid}-fullName`}>Nom complet</FieldLabel>
           <Input
-            id="fullName"
+            id={`${uid}-fullName`}
             autoComplete="name"
             aria-invalid={!!errors.fullName}
             {...form.register("fullName")}
@@ -58,9 +59,9 @@ export function SignUpForm() {
         </Field>
 
         <Field data-invalid={!!errors.email}>
-          <FieldLabel htmlFor="email">Adresse e-mail</FieldLabel>
+          <FieldLabel htmlFor={`${uid}-email`}>Adresse e-mail</FieldLabel>
           <Input
-            id="email"
+            id={`${uid}-email`}
             type="email"
             autoComplete="email"
             aria-invalid={!!errors.email}
@@ -70,15 +71,15 @@ export function SignUpForm() {
         </Field>
 
         <Field data-invalid={!!errors.password}>
-          <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+          <FieldLabel htmlFor={`${uid}-password`}>Mot de passe</FieldLabel>
           <PasswordInput
-            id="password"
+            id={`${uid}-password`}
             autoComplete="new-password"
             aria-invalid={!!errors.password}
-            aria-describedby="password-hint"
+            aria-describedby={`${uid}-password-hint`}
             {...form.register("password")}
           />
-          <FieldDescription id="password-hint">
+          <FieldDescription id={`${uid}-password-hint`}>
             8 caractères minimum, dont au moins une lettre et un chiffre.
           </FieldDescription>
           <FieldError errors={[errors.password]} />

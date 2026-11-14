@@ -10,7 +10,7 @@ Chaque phase n'est terminée que lorsque ses critères sont vérifiés (typechec
 | 1 | Initialisation | Next.js, TS 6.0 strict, Tailwind 4, shadcn, ESLint 9, Vitest, Playwright, scripts npm | `dev` démarre ; `build`, `typecheck`, `lint`, tests de fumée au vert | ✅ |
 | 2 | Design global | Tokens (couleurs, typo), layout app (sidebar, topbar, en-têtes, états vides), page d'accueil, responsive | Coquille navigable sur ordinateur, tablette, mobile | ✅ |
 | 3 | Authentification | Projets Supabase dev/prod, clients Supabase, `proxy.ts`, inscription, connexion, déconnexion, mot de passe oublié | Parcours complets testés (E2E) ; routes protégées | ✅ |
-| 4 | Base & espaces | Migrations profiles / workspaces / members, triggers, fonctions RLS, création auto de l'espace, types générés | Tests RLS : aucune fuite entre deux espaces | ⚪ |
+| 4 | Base & espaces | Migrations profiles / workspaces / members, triggers, fonctions RLS, création auto de l'espace, types générés | Tests RLS : aucune fuite entre deux espaces | ✅ |
 | 5 | Clients | Migration, CRUD, recherche, filtres, fiche client | CRUD + RLS + E2E | ⚪ |
 | 6 | Projets | Migration, CRUD, statuts, budget, avancement, vue tableau + Kanban | CRUD + Kanban + RLS + E2E | ⚪ |
 | 7 | Tâches | Migration, CRUD, priorités, retards, filtres | CRUD + filtres + RLS + E2E | ⚪ |

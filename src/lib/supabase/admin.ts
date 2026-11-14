@@ -3,6 +3,7 @@ import "server-only";
 import { createClient } from "@supabase/supabase-js";
 
 import { getSupabasePublicEnv } from "@/lib/env";
+import type { Database } from "@/types/database.types";
 
 /**
  * Client d'administration (clé secrète) : CONTOURNE LA RLS.
@@ -14,7 +15,7 @@ export function createAdminClient() {
   if (!secretKey) {
     throw new Error("Variable d'environnement manquante : SUPABASE_SECRET_KEY");
   }
-  return createClient(getSupabasePublicEnv().url, secretKey, {
+  return createClient<Database>(getSupabasePublicEnv().url, secretKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }

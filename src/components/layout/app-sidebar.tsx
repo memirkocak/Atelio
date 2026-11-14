@@ -34,12 +34,18 @@ import {
  * les parties qui la lisent sont placées dans <Suspense>, le reste de la coquille
  * est pré-rendu statiquement.
  */
-export function AppSidebar({ userMenu }: { userMenu: ReactNode }) {
+export function AppSidebar({
+  userMenu,
+  workspaceName,
+}: {
+  userMenu: ReactNode;
+  workspaceName: ReactNode;
+}) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="h-14 justify-center border-b border-sidebar-border">
-        <Suspense fallback={<BrandContent />}>
-          <BrandLink />
+        <Suspense fallback={<BrandContent workspaceName={workspaceName} />}>
+          <BrandLink workspaceName={workspaceName} />
         </Suspense>
       </SidebarHeader>
 
@@ -65,26 +71,29 @@ export function AppSidebar({ userMenu }: { userMenu: ReactNode }) {
   );
 }
 
-function BrandContent() {
+function BrandContent({ workspaceName }: { workspaceName: ReactNode }) {
   return (
-    <span className="flex items-center gap-2 px-1">
+    <span className="flex min-w-0 items-center gap-2 px-1">
       <BrandMark />
-      <span className="text-[15px] font-semibold tracking-tight text-foreground group-data-[collapsible=icon]:hidden">
-        Atelio
+      <span className="grid min-w-0 leading-tight group-data-[collapsible=icon]:hidden">
+        <span data-testid="workspace-name" className="truncate font-semibold text-foreground">
+          {workspaceName}
+        </span>
+        <span className="text-xs text-muted-foreground">Atelio</span>
       </span>
     </span>
   );
 }
 
-function BrandLink() {
+function BrandLink({ workspaceName }: { workspaceName: ReactNode }) {
   const { slug } = useParams<{ slug: string }>();
   return (
     <Link
       href={workspaceHref(slug, DEFAULT_WORKSPACE_SEGMENT)}
-      aria-label="Atelio, tableau de bord"
-      className="rounded-md outline-hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+      title="Tableau de bord de l’espace"
+      className="min-w-0 rounded-md outline-hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring"
     >
-      <BrandContent />
+      <BrandContent workspaceName={workspaceName} />
     </Link>
   );
 }

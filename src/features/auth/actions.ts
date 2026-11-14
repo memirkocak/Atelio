@@ -8,6 +8,7 @@ import { authErrorMessage } from "@/lib/auth/errors";
 import { DEFAULT_AFTER_LOGIN, safeNextPath } from "@/lib/auth/redirect";
 import { getSiteUrl } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { getHomePath } from "@/features/workspaces/queries";
 
 import {
   forgotPasswordSchema,
@@ -32,10 +33,12 @@ export async function signIn(input: unknown, next?: string | null): Promise<Acti
   if (!parsed.success) return fail(INVALID_FORM, fieldErrors(parsed.error));
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return fail(authErrorMessage(error));
 
-  redirect(safeNextPath(next));
+  // Page demandée avant la connexion, sinon l'espace de l'utilisateur.
+  const requested = safeNextPath(next, "");
+  redirect(requested || (await getHomePath(data.user.id, supabase)));
 }
 
 export type SignUpResult = ActionResult<{ needsEmailConfirmation: boolean }>;
@@ -57,7 +60,7 @@ export async function signUp(input: unknown): Promise<SignUpResult> {
   if (error) return fail(authErrorMessage(error));
 
   // Confirmation désactivée (projet de dev) : session immédiate.
-  if (data.session) redirect(DEFAULT_AFTER_LOGIN);
+  if (data.session && data.user) redirect(await getHomePath(data.user.id, supabase));
 
   // Confirmation activée : même réponse que le compte existe ou non (pas d'énumération).
   return ok({ needsEmailConfirmation: true });
@@ -90,7 +93,7 @@ export async function updatePassword(input: unknown): Promise<ActionResult> {
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return fail(authErrorMessage(error));
 
-  redirect(DEFAULT_AFTER_LOGIN);
+  redirect(await getHomePath(data.claims.sub, supabase));
 }
 
 export async function signOut(): Promise<void> {

@@ -65,7 +65,8 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 
 ## Sécurité (non négociable)
 
-- RLS activée sur **toutes** les tables contenant des données privées ; chaque donnée métier porte un `workspace_id`.
+- RLS activée sur **toutes** les tables contenant des données privées ; chaque donnée métier porte un `workspace_id`. Politiques basées sur `private.is_workspace_member()` / `private.has_workspace_role()` (schéma non exposé) ; droits d'écriture accordés colonne par colonne ; chaque nouvelle table a ses tests dans `tests/rls/`.
+- Next.js 16 garde les pages visitées dans le DOM (masquées) : identifiants HTML via `useId()`, jamais en dur ; tests E2E via les helpers visibles de `tests/e2e/helpers/locators.ts`.
 - Identité côté serveur via `supabase.auth.getClaims()`, jamais `getSession()`.
 - La clé secrète Supabase n'est utilisée que dans `src/lib/supabase/admin.ts` (`server-only`) pour les scripts d'administration (seed, reset démo), jamais dans un flux utilisateur.
 - Calculs des devis validés et recalculés côté serveur (fonction Postgres) ; devis non modifiable hors brouillon.
@@ -83,6 +84,10 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 | `npm run test:e2e` | Tests Playwright (`tests/e2e`, Chromium, démarre `npm run dev` automatiquement) |
 | `npx shadcn@4.23.0 add <composant>` | Ajouter un composant shadcn/ui (base Radix) |
 | `npx supabase config diff` / `config push` | Comparer puis appliquer `supabase/config.toml` au projet lié (toujours relire le diff avant) |
+| `npx supabase migration new <nom>` | Créer une migration SQL dans `supabase/migrations/` |
+| `npx supabase db push --remote --dry-run` puis `npm run db:push` | Aperçu puis application des migrations au projet lié |
+| `npm run db:types` | Régénérer `src/types/database.types.ts` après chaque migration |
+| `npm run test:rls` | Tests de sécurité RLS (projet de dev, deux utilisateurs réels) |
 
 Les tests E2E utilisent le projet Supabase de dev (clés dans `.env.local`) et suppriment leurs comptes `e2e-…@example.com` à la fin.
 

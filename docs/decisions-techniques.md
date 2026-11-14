@@ -162,3 +162,26 @@ _14/11/2026 — validée_
 - Projet Playwright `setup` (`tests/e2e/auth.setup.ts`) : crée un compte confirmé via l'API d'administration, se connecte et enregistre la session (`playwright/.auth/`, ignoré par Git), réutilisée par les tests de la coquille.
 - Comptes de test `e2e-…@example.com`, supprimés par `tests/e2e/global-teardown.ts`.
 - L'envoi réel d'e-mails n'est pas testé (quota du SMTP gratuit).
+- Next.js 16 conserve les pages visitées dans le DOM, masquées (React Activity) : les tests utilisent `byLabel` / `byText` / `byTestId` (`tests/e2e/helpers/locators.ts`), filtrés sur les éléments visibles.
+
+### DT-022 — Modèle d'espaces de travail et RLS (migration 0001)
+_14/11/2026 — validée_
+
+- Tables `profiles`, `workspaces`, `workspace_members` (+ enum `workspace_role`). Migration `supabase/migrations/20261114065237_workspaces.sql`, appliquée avec `npm run db:push` (`supabase db push --remote`, aperçu `--dry-run` avant).
+- **Création automatique** à l'inscription (trigger `on_auth_user_created` → `private.provision_user`) : profil, espace « Espace de <Prénom> » (ou « Mon espace »), slug `espace-de-prenom-xxxx` (suffixe aléatoire, accents retirés par `unaccent`), rôle `owner`. Rattrapage des comptes existants dans la migration.
+- **Schéma `private`** (non exposé par l'API) pour toutes les fonctions `SECURITY DEFINER` (`is_workspace_member`, `has_workspace_role`, `shares_workspace_with`, `provision_user`, `slugify`), avec `search_path = ''`. Évite la récursion RLS sur `workspace_members`.
+- **Droits** : aucun accès `anon` ; `authenticated` en lecture ; écritures limitées **par colonne** (`profiles.full_name / avatar_url`, `workspaces.name / default_vat_rate_bp`). Aucune création / suppression d'espace ni gestion des membres par l'API en V1.
+- **Politiques** : lecture des espaces et membres par les membres ; modification d'un espace par `owner` / `admin` ; profils visibles par soi-même et les co-membres.
+- **Comptes supprimés** : `workspaces.created_by` passe à NULL ; les espaces orphelins seront gérés par la suppression de compte (phase 11). Les tests suppriment explicitement les espaces de leurs comptes.
+- Types TypeScript générés (`npm run db:types` → `src/types/database.types.ts`), utilisés par les trois clients Supabase.
+- Tests : `npm run test:rls` (18 tests, deux utilisateurs réels, projet de dev).
+
+### DT-023 — Accès à un espace dans l'application
+_14/11/2026 — validée_
+
+- `WorkspaceGate` (layout `/w/[slug]`, dans `<Suspense>`) : session + espace lisible via la RLS, sinon `notFound()` → 404 identique pour un espace inexistant ou appartenant à un autre utilisateur.
+- `getWorkspaceBySlug` mis en cache par requête (`React.cache`) : partagé entre la garde et le nom de l'espace affiché dans la sidebar.
+- Après connexion, inscription ou nouveau mot de passe, les Server Actions redirigent **directement** vers `/w/<slug>/tableau-de-bord` (`getHomePath`). Une redirection d'action vers un Route Handler n'est pas suivie par le routeur client. `/demarrage` devient un Route Handler HTTP, utilisé par le proxy et les liens reçus par e-mail.
+- `connection()` est appelé dans `createClient()` (client serveur) : toute requête Supabase est évaluée au moment de la requête (DT-020).
+- Identifiants des champs de formulaire générés par `useId()` : évite les doublons d'`id` entre pages conservées en mémoire par Next (accessibilité).
+- En développement, chaque 404 volontaire d'un espace produit dans le terminal un message « Could not validate `instant` » : comportement attendu, sans effet en production.

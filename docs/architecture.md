@@ -131,10 +131,13 @@ Toutes les tables métier ont `id uuid`, `workspace_id uuid not null`, `created_
 
 **Montants** : `bigint` en centimes ; TVA en points de base (2000 = 20 %) ; arrondi au centime par ligne.
 
+**État d'implémentation** : `profiles`, `workspaces`, `workspace_members` en place (migration 0001, DT-022). Les tables métier arrivent avec leurs modules (phases 5 à 10), chacune avec sa migration et ses tests RLS.
+
 ## 6. Sécurité
 
 - RLS activée sur toutes les tables ci-dessus.
-- Fonctions `is_workspace_member(ws uuid)` et `has_workspace_role(ws uuid, roles workspace_role[])` en `SECURITY DEFINER STABLE` avec `search_path` fixé, pour éviter la récursion RLS sur `workspace_members`.
+- Fonctions `private.is_workspace_member(ws uuid)`, `private.has_workspace_role(ws uuid, roles workspace_role[])` et `private.shares_workspace_with(user uuid)` en `SECURITY DEFINER STABLE` avec `search_path = ''`, dans un schéma non exposé par l'API, pour éviter la récursion RLS sur `workspace_members`.
+- Droits d'écriture accordés colonne par colonne (`GRANT UPDATE (col, …)`) ; aucun droit pour `anon`.
 - Politiques séparées `select` / `insert` / `update` / `delete` ; `workspace_id` vérifié à l'insertion (`WITH CHECK`).
 - Devis : `update` des lignes interdit hors brouillon (politique + vérification dans la fonction RPC).
 - Route cron protégée par un secret (`CRON_SECRET`).

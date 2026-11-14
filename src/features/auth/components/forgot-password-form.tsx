@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useId } from "react";
 import { useForm } from "react-hook-form";
 
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -15,6 +15,7 @@ import { SubmitButton } from "./submit-button";
 import { useServerActionForm } from "./use-server-action-form";
 
 export function ForgotPasswordForm() {
+  const uid = useId();
   const [sent, setSent] = useState(false);
   const form = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -39,9 +40,9 @@ export function ForgotPasswordForm() {
       <FieldGroup>
         <FormError message={error} />
         <Field data-invalid={!!errors.email}>
-          <FieldLabel htmlFor="email">Adresse e-mail</FieldLabel>
+          <FieldLabel htmlFor={`${uid}-email`}>Adresse e-mail</FieldLabel>
           <Input
-            id="email"
+            id={`${uid}-email`}
             type="email"
             autoComplete="email"
             aria-invalid={!!errors.email}

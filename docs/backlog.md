@@ -47,11 +47,12 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 
 | ID | Tâche | Statut |
 |---|---|---|
-| B-040 | Migration 0001 : profiles, workspaces, workspace_members, enum de rôles, triggers (`updated_at`, création profil + espace à l'inscription) | ⚪ |
-| B-041 | Fonctions `is_workspace_member` / `has_workspace_role` + politiques RLS | ⚪ |
-| B-042 | Génération des types TypeScript | ⚪ |
-| B-043 | Tests RLS (deux utilisateurs, deux espaces) | ⚪ |
-| B-044 | Layout `/w/[slug]` : contrôle d'appartenance, redirection vers l'espace par défaut | ⚪ |
+| B-040 | Migration 0001 : profiles, workspaces, workspace_members, enum de rôles, triggers (`updated_at`, création profil + espace à l'inscription) | ✅ |
+| B-041 | Fonctions `private.*` + politiques RLS + droits par colonne | ✅ |
+| B-042 | Génération des types TypeScript (`npm run db:types`) | ✅ |
+| B-043 | Tests RLS (deux utilisateurs, deux espaces) — `npm run test:rls` | ✅ |
+| B-044 | Layout `/w/[slug]` : contrôle d'appartenance (404), redirection vers l'espace par défaut, nom de l'espace dans la sidebar | ✅ |
+| B-045 | Suppression de compte : nettoyer les espaces dont l'utilisateur est seul propriétaire | ⏸️ phase 11 |
 
 ## Phases suivantes (à détailler au moment venu)
 
