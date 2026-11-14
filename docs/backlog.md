@@ -79,7 +79,19 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-065 | Panneau de création / modification, suppression confirmée, fiche projet avec historique | ✅ |
 | B-066 | Fiche client : liste des projets, création préremplie, avertissement à la suppression | ✅ |
 | B-067 | Tests : 30 unitaires, 13 RLS, 8 E2E ; isolation des suites E2E | ✅ |
-| B-068 | Fiche projet : liste des tâches (phase 7) | ⏸️ |
+| B-068 | Fiche projet : liste des tâches (phase 7) | ✅ |
+
+## Phase 7 — Tâches
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-070 | Migration 0005 : `tasks`, clé étrangère composite vers `projects`, `completed_at`, RLS, journal | ✅ |
+| B-071 | Couche métier : schémas, filtres d'échéance (Paris), requêtes, actions (dont cocher / ajout rapide) | ✅ |
+| B-072 | Liste : ajout rapide, case optimiste avec annulation, filtres, terminées masquées, compteurs | ✅ |
+| B-073 | Panneau de création / modification / suppression | ✅ |
+| B-074 | Fiche projet : tâches, compteur, ajout rapide ; avertissement à la suppression du projet | ✅ |
+| B-075 | Tests : 20 unitaires, 9 RLS, 8 E2E | ✅ |
+| B-076 | Personne assignée (avec la collaboration) | ⏸️ V2 |
 
 ## Phases suivantes (à détailler au moment venu)
 

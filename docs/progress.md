@@ -8,7 +8,8 @@
 - **Phase 3 — Authentification** : terminée.
 - **Phase 4 — Base de données et espaces** : terminée.
 - **Phase 5 — Clients** : terminée.
-- **Phase 6 — Projets** : terminée. Vue tableau et vue Kanban (glisser-déposer), budget, dates, retard, avancement, fiche projet avec historique, projets affichés sur la fiche client.
+- **Phase 6 — Projets** : terminée.
+- **Phase 7 — Tâches** : terminée. Ajout rapide, case « terminée » avec annulation, priorités, échéances et retards, filtres, panneau de modification, tâches sur la fiche projet.
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -147,6 +148,21 @@
 | `npm run test:e2e` | ✅ 33/33 sur trois passages consécutifs (dont 8 projets : création, validation, glisser-déposer Kanban, menu de statut, filtres, fiche, détachement, suppression, mobile, 404) |
 | Navigateur | ✅ tableau et Kanban (1440 px), Kanban défilant en mobile (375 px) |
 
+#### Tâche 8 — Module Tâches (phase 7)
+- Migration 0005 (`tasks`, clé étrangère composite vers `projects`, `completed_at`, journal) appliquée après `--dry-run` ; types régénérés.
+- `src/features/tasks/` (constantes, types, retard et filtres d'échéance, schémas, requêtes, actions, composants : ajout rapide, case, ligne, liste, formulaire, panneau, barre d'outils, section) ; page `/w/[slug]/taches`.
+- Fiche projet : section Tâches réelle ; confirmation de suppression du projet indiquant les tâches détachées.
+- Aucune nouvelle dépendance. Décision DT-029.
+
+**Vérifications (tâche 8)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 96/96 (dont 20 tâches : retard, semaine en heure de Paris, validation, URL) |
+| `npm run test:rls` | ✅ 53/53 (dont 9 tâches) |
+| `npm run test:e2e` | ✅ 41/41 sur deux passages consécutifs (dont 8 tâches : ajout rapide, cocher / annuler / rouvrir avec persistance, filtres, panneau, fiche projet, détachement, suppression, mobile, isolation) |
+| Navigateur | ✅ liste (1280 px) et mobile (375 px) |
+
 ## Prochaine étape
 
-**Phase 7 — Tâches** : migration `tasks` (projet facultatif du même espace, priorité, échéance, statut, date de fin) + RLS + journal, liste avec filtres (statut, priorité, projet, échéance) et mise en évidence des retards, case « terminée » en un clic, tâches affichées sur la fiche projet. À présenter en détail avant exécution.
+**Phase 8 — Devis et PDF** : migration `quotes` / `quote_items` / numérotation (`DEV-AAAA-NNNN`), calculs HT / TVA / TTC dans une fonction Postgres qui fait foi (et le même calcul en TypeScript pour l'aperçu), instantané du client à l'envoi, statuts (brouillon, envoyé, accepté, refusé, expiré calculé), devis non modifiable hors brouillon, suppression d'un client bloquée s'il a des devis, génération du PDF (`@react-pdf/renderer`, police embarquée). C'est le module le plus sensible : à présenter en détail avant exécution.

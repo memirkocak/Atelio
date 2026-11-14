@@ -16,12 +16,15 @@ export function ProjectActions({
   slug,
   projectId,
   projectName,
+  taskCount,
   defaultValues,
   clientOptions,
 }: {
   slug: string;
   projectId: string;
   projectName: string;
+  /** Tâches rattachées (elles seront détachées, pas supprimées). */
+  taskCount: number;
   defaultValues: ProjectFormInput;
   clientOptions: ClientOption[];
 }) {
@@ -42,7 +45,18 @@ export function ProjectActions({
       />
       <ConfirmDeleteDialog
         title="Supprimer ce projet ?"
-        description={<p>« {projectName} » sera définitivement supprimé. Cette action est irréversible.</p>}
+        description={
+          <>
+            <p>« {projectName} » sera définitivement supprimé. Cette action est irréversible.</p>
+            {taskCount > 0 ? (
+              <p className="font-medium text-foreground">
+                {taskCount === 1
+                  ? "1 tâche est rattachée à ce projet : elle sera conservée, sans projet."
+                  : `${taskCount} tâches sont rattachées à ce projet : elles seront conservées, sans projet.`}
+              </p>
+            ) : null}
+          </>
+        }
         successMessage={`« ${projectName} » a été supprimé`}
         onConfirm={() => deleteProjectAction(slug, projectId)}
         redirectTo={`/w/${slug}/projets`}

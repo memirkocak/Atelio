@@ -1,12 +1,15 @@
-import { ArrowLeft, CalendarDays, CircleCheck, ListChecks, Users, Wallet } from "lucide-react";
+import { ArrowLeft, CalendarDays, CircleCheck, Users, Wallet } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
-import { InfoItem, Panel, UpcomingNotice } from "@/components/shared/panel";
+import { InfoItem, Panel } from "@/components/shared/panel";
 import { ActivityTimeline } from "@/features/activity/components/activity-timeline";
 import { getEntityActivity } from "@/features/activity/queries";
 import { listClientOptions } from "@/features/clients/queries";
+import { TaskList } from "@/features/tasks/components/task-list";
+import { TaskQuickAdd } from "@/features/tasks/components/task-quick-add";
+import { listProjectOptions, listTasksForProject } from "@/features/tasks/queries";
 import { getWorkspaceBySlug } from "@/features/workspaces/queries";
 import { formatIsoDate } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
@@ -30,10 +33,13 @@ export async function ProjectDetailSection({ params }: { params: Promise<{ slug:
   const project = await getProject(workspace.id, id);
   if (!project) notFound();
 
-  const [activity, clientOptions] = await Promise.all([
+  const [activity, clientOptions, tasks, projectOptions] = await Promise.all([
     getEntityActivity(workspace.id, "project", id),
     listClientOptions(workspace.id),
+    listTasksForProject(workspace.id, id),
+    listProjectOptions(workspace.id),
   ]);
+  const doneCount = tasks.filter((t) => t.status === "done").length;
   const client = clientLabel(project.client);
 
   return (
@@ -68,6 +74,7 @@ export async function ProjectDetailSection({ params }: { params: Promise<{ slug:
             slug={slug}
             projectId={project.id}
             projectName={project.name}
+            taskCount={tasks.length}
             defaultValues={toProjectFormInput(project)}
             clientOptions={clientOptions}
           />
@@ -111,8 +118,24 @@ export async function ProjectDetailSection({ params }: { params: Promise<{ slug:
             )}
           </Panel>
 
-          <Panel title="Tâches">
-            <UpcomingNotice icon={ListChecks} text="Les tâches de ce projet apparaîtront ici avec le module Tâches." />
+          <Panel
+            title="Tâches"
+            action={
+              tasks.length > 0 ? (
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {doneCount} / {tasks.length} terminée{doneCount > 1 ? "s" : ""}
+                </span>
+              ) : null
+            }
+          >
+            <div className="flex flex-col gap-3">
+              <TaskQuickAdd slug={slug} projectId={project.id} placeholder="Ajouter une tâche à ce projet…" />
+              {tasks.length > 0 ? (
+                <TaskList tasks={tasks} slug={slug} projectOptions={projectOptions} showProject={false} />
+              ) : (
+                <p className="text-muted-foreground">Aucune tâche pour ce projet.</p>
+              )}
+            </div>
           </Panel>
         </div>
 

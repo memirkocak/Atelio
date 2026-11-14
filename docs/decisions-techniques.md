@@ -230,3 +230,14 @@ _14/11/2026 — validée_
 - Les suites qui créent des données (Clients, Projets) utilisent `isolatedUser()` (`tests/e2e/helpers/isolated-user.ts`) : un utilisateur et un espace propres au fichier, connectés une seule fois (storageState sous forme de fonction, lu après la connexion). Les suites en lecture seule (coquille) gardent la session partagée d'`auth.setup.ts`.
 - Cause : deux suites en parallèle sur le même espace faussaient les compteurs et les états vides.
 - Toute vérification d'un changement fait par une action serveur se fait après rechargement de la page (sinon le test peut se terminer avant l'enregistrement).
+
+### DT-029 — Module Tâches
+_14/11/2026 — validée_
+
+- **Migration 0005** : enums `task_status` (`todo`, `in_progress`, `done`) et `task_priority` (`low`, `medium`, `high`, `urgent` — l'ordre de l'enum sert au tri), table `tasks` (titre, projet facultatif, statut, priorité, échéance, description, `completed_at`, `search_text`), RLS et droits par colonne, journal (`entity_type = 'task'`).
+- Projet d'une tâche : **clé étrangère composite** vers `projects(id, workspace_id)` (contrainte `UNIQUE` ajoutée sur `projects`), `ON DELETE SET NULL (project_id)` : supprimer un projet détache ses tâches, avec avertissement dans la confirmation.
+- `completed_at` géré par trigger (statut `done`), non modifiable directement.
+- **Retard** : tâche non terminée dont l'échéance est strictement passée (jour de Paris). Filtres d'échéance : en retard, aujourd'hui, cette semaine (jusqu'au dimanche, calcul en dates ISO sans fuseau), sans échéance.
+- **Interface** : liste type « liste de travail » ; ajout rapide (titre + Entrée, focus conservé) ; case « terminée » optimiste (`useOptimistic`) avec notification « Tâche terminée » et bouton **Annuler** ; tâches terminées masquées par défaut (`done=1` pour les afficher) ; modification et suppression dans un panneau latéral (pas de page dédiée) ; compteur « N à terminer · N en retard » (lien vers le filtre).
+- Fiche projet : tâches du projet, compteur « x / y terminées », ajout rapide rattaché au projet.
+- Pas de personne assignée en V1 (collaboration en V2 : colonne ajoutable sans refonte).
