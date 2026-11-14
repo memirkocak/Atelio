@@ -13,6 +13,7 @@ const ENTITY_TABLES = {
   project: "projects",
   task: "tasks",
   quote: "quotes",
+  event: "events",
 } as const satisfies Record<ActivityEntityType, string>;
 
 const ACTIONS = new Set<RecentActivityItem["action"]>(["created", "updated", "deleted"]);

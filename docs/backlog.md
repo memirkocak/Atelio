@@ -118,6 +118,18 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-093 | Flux d'activité récente de l'espace (10 événements, lien si l'élément existe encore) | ✅ |
 | B-094 | Tests : 11 unitaires, 11 RLS (valeurs exactes, fuseau, isolation), 5 E2E | ✅ |
 
+## Phase 10 — Calendrier
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-100 | Migration 0008 : `events`, clés composites client / projet, contraintes de dates, RLS, journal | ✅ |
+| B-101 | Conversion heure de Paris ↔ UTC (changements d'heure), utilitaires de semaine | ✅ |
+| B-102 | Couche métier : schémas (formulaire, URL), grille, requêtes agrégées, actions | ✅ |
+| B-103 | Vue mois (grille / mobile), vue semaine agenda, navigation, filtres par type | ✅ |
+| B-104 | Panneau rendez-vous : horaire ou journée entière, lieu, client, projet, suppression | ✅ |
+| B-105 | Tests : 22 unitaires, 9 RLS, 8 E2E | ✅ |
+| B-106 | Glisser-déposer, rendez-vous récurrents, invitations | ⏸️ V2 |
+
 ## Phases suivantes (à détailler au moment venu)
 
 - Phase 6 — Projets (tableau + Kanban)

@@ -16,7 +16,7 @@ Chaque phase n'est terminée que lorsque ses critères sont vérifiés (typechec
 | 7 | Tâches | Migration, CRUD, priorités, retards, filtres | CRUD + filtres + RLS + E2E | ✅ |
 | 8 | Devis & PDF | Migration, RPC de calcul, numérotation, instantané, statuts, PDF | Tests de calcul (TS = SQL), PDF correct (accents, €), RLS + E2E | ✅ |
 | 9 | Tableau de bord | KPI réels, graphiques, activité récente (activity_logs) | Valeurs vérifiées contre la base | ✅ |
-| 10 | Calendrier | Événements (migration + CRUD), vues mois / semaine, agrégation tâches / projets / devis | Affichage correct, fuseau Europe/Paris | ⚪ |
+| 10 | Calendrier | Événements (migration + CRUD), vues mois / semaine, agrégation tâches / projets / devis | Affichage correct, fuseau Europe/Paris | ✅ |
 | 11 | Statistiques | Graphiques Recharts sur données réelles | Valeurs vérifiées | ⚪ |
 | 12 | Finalisation & mise en ligne | Paramètres, mode démo (seed + reset), cron Vercel, accessibilité, projet Supabase `atelio-prod` (Paris, confirmation e-mail activée), SMTP Resend + modèles d'e-mails français, déploiement prod, README portfolio | App en ligne, démo fonctionnelle, README avec captures | ⚪ |
 

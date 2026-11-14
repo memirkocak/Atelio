@@ -1,8 +1,9 @@
-import { Briefcase, FileText, ListTodo, Users, type LucideIcon } from "lucide-react";
+import { Briefcase, CalendarDays, FileText, ListTodo, Users, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 
 import { workspaceHref } from "@/components/layout/navigation";
 import type { ActivityEntityType } from "@/features/activity/queries";
+import { EVENT_FIELD_LABELS } from "@/features/calendar/constants";
 import { CLIENT_FIELD_LABELS } from "@/features/clients/constants";
 import { PROJECT_FIELD_LABELS } from "@/features/projects/constants";
 import { QUOTE_FIELD_LABELS } from "@/features/quotes/constants";
@@ -20,6 +21,8 @@ const ENTITIES: Record<
   // Les tâches n'ont pas de page de détail : pas de lien.
   task: { icon: ListTodo, noun: "Tâche", feminine: true, segment: null, fields: TASK_FIELD_LABELS },
   quote: { icon: FileText, noun: "Devis", feminine: false, segment: "devis", fields: QUOTE_FIELD_LABELS },
+  // Les rendez-vous s'ouvrent depuis le calendrier : pas de page de détail.
+  event: { icon: CalendarDays, noun: "Rendez-vous", feminine: false, segment: null, fields: EVENT_FIELD_LABELS },
 };
 
 const VERBS: Record<RecentActivityItem["action"], string> = {

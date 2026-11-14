@@ -279,3 +279,15 @@ _14/11/2026 — validée_
 - **Recharts 3.8** via `npx shadcn@4.23.0 add chart` (composant `chart.tsx`, prévu dans la stack ; `globals.css` inchangé, couleurs `--chart-*` existantes). Graphiques dans un composant client ; résumé textuel `sr-only` pour les lecteurs d'écran.
 - **Activité récente** : 10 derniers événements de `activity_logs` ; existence actuelle de chaque élément vérifiée (une requête par type) → lien vers la fiche, sinon libellé conservé sans lien. Les transitions de devis sont reconnues à leurs colonnes (`sent_at`, `accepted_at`, `refused_at`) → « Devis envoyé / accepté / refusé ». Les tâches n'ont pas de page de détail : pas de lien.
 - Tests E2E : une insertion groupée supabase-js envoie `NULL` pour les colonnes absentes d'une ligne → toujours fournir les mêmes colonnes. Avec le rendu en streaming, une 404 se vérifie par le contenu (« Page introuvable ») et non par le statut HTTP.
+
+### DT-033 — Calendrier : rendez-vous, fuseau et vues (phase 10)
+_14/11/2026 — validée_
+
+- **Table `events`** (migration 0008) : `starts_at` / `ends_at` en `timestamptz`, **fin exclusive** strictement après le début, durée max. 366 jours, `all_day`, `location` (ajouté au schéma prévu), client et projet facultatifs du même espace (clés composites, `ON DELETE SET NULL`). Droits d'écriture par colonne (`workspace_id` et `created_by` non modifiables), RLS membre, journal `event`.
+- **Journée entière** : de 00:00 (Paris) du premier jour à 00:00 du lendemain du dernier jour. Le formulaire manipule des dates et heures « murales » de Paris ; la conversion se fait côté application.
+- **Fuseau sans dépendance** (`src/lib/dates.ts`, `Intl`) : `parisToUtcIso` / `utcToParis`. Heure inexistante (printemps, 02:30) décalée d'une heure ; heure ambiguë (automne) = première occurrence. `@date-fns/tz` écarté (pas nécessaire).
+- **Agrégation en lecture** (rien n'est copié) : rendez-vous **chevauchant** la période, échéances des tâches (terminées barrées), début / échéance des projets (hors annulés), fin de validité des **devis envoyés**. 500 lignes max. par type et par période.
+- **Vues** : mois (semaines complètes du lundi au dimanche, 3 éléments par case puis « +N » vers la semaine) ; semaine **agenda** (colonnes à partir de `lg`, liste en dessous) — choix validé plutôt qu'une grille horaire. Mobile : mini-grille avec points + liste des jours occupés.
+- **État dans l'URL** (`view`, `date`, `hide`) : navigation et filtres sont des liens (rendu serveur), seuls le panneau et ses déclencheurs sont côté client. Valeurs invalides → valeurs par défaut.
+- Liens : projet et devis vers leur fiche ; tâche vers la liste filtrée sur son titre (pas de fiche) ; rendez-vous → panneau de modification.
+- `addDaysIso` déplacé dans `src/lib/dates.ts` (réexporté par `features/tasks/status.ts`).

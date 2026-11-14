@@ -12,6 +12,7 @@
 - **Phase 7 — Tâches** : terminée.
 - **Phase 8 — Devis et PDF** : terminée. Paramètres de l'entreprise, éditeur avec totaux en direct, calculs et numérotation garantis par la base, envoi figé, accepté / refusé / expiré, duplication, PDF, devis sur la fiche client.
 - **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
+- **Phase 10 — Calendrier** : terminée. Rendez-vous (horaire ou journée entière, lieu, client, projet), vues mois et semaine (agenda), échéances des tâches, projets et devis envoyés, filtres par type.
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -213,6 +214,29 @@
 - Mobile : les 6 cartes sont empilées sur une colonne (lisible mais long) ; possible passage à 2 colonnes lors de la finition (phase 12).
 - Les tâches n'ont pas de page de détail : pas de lien dans le flux d'activité.
 
+#### Tâche 11 — Calendrier (phase 10)
+- Migration 0008 `events` (clés composites vers `clients` et `projects` avec détachement, fin exclusive strictement après le début, durée max. 1 an, droits par colonne, RLS, journal `event`) ; aperçu `--dry-run` puis application ; types régénérés.
+- `src/lib/dates.ts` : conversion heure de Paris ↔ UTC sans dépendance (`Intl`, changements d'heure gérés), `addDaysIso` (déplacé depuis les tâches), `isoWeekday`, `startOfWeekIso`.
+- `src/features/calendar/` : constantes, types, schémas (formulaire, conversions, URL `view` / `date` / `hide`), grille (période, titres, répartition par jour), requêtes (rendez-vous chevauchant la période, tâches, projets, devis envoyés), actions, composants (barre d'outils en liens, calendrier interactif, élément, panneau, formulaire) ; page `/w/[slug]/calendrier`.
+- Vue semaine de type agenda (choix validé) ; vue mois en grille sur ordinateur, mini-grille + liste des jours sur mobile.
+- Activité récente du tableau de bord : « Rendez-vous créé / modifié / supprimé ».
+- Composant shadcn `switch` (aucun nouveau paquet npm). Aucune nouvelle dépendance.
+- Corrections après contrôle visuel : majuscule de tout le titre (`capitalize` → première lettre), horaire affiché deux fois en vue semaine, colonnes trop étroites (7 colonnes à partir de `lg`).
+- Décision DT-033.
+
+**Vérifications (tâche 11)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 141/141 (dont 8 dates / fuseau aux changements d'heure, 14 calendrier) |
+| `npm run test:rls` | ✅ 103/103 (dont 9 rendez-vous : droits, contraintes, colonnes protégées, client / projet d'un autre espace, isolation, anonyme, détachement, journal) |
+| `npm run test:e2e` | ✅ 63/63 sur la suite complète, premier passage (dont 8 calendrier : navigation, création avec heure de Paris vérifiée en base, journée entière sur 3 jours, validation, modification, suppression, tâches / projets / devis liés, filtres, mobile, isolation) |
+| Navigateur | ✅ vues mois et semaine, panneau de modification (heures de Paris correctes), mobile 375 px sans débordement, aucune erreur console ; compte temporaire supprimé |
+
+**Points ouverts**
+- Pas de glisser-déposer ni de rendez-vous récurrents (V2).
+- Les tâches et rendez-vous n'ont pas de page de détail : la tâche mène à la liste filtrée, le rendez-vous s'ouvre dans le panneau.
+
 ## Prochaine étape
 
-**Phase 10 — Calendrier** : migration `events` (rendez-vous en `timestamptz`, RLS, journal), CRUD, vues mois / semaine sur mesure (date-fns, fuseau Europe/Paris), agrégation des échéances de tâches et projets et des validités de devis. À présenter en détail avant exécution.
+**Phase 11 — Statistiques** : graphiques Recharts sur données réelles (évolution des devis créés / acceptés et montants, taux d'acceptation, panier moyen, projets terminés, répartition des tâches par statut et priorité, activité), avec période choisie. À présenter en détail avant exécution.
