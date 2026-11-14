@@ -13,6 +13,11 @@ const baseURL = `http://localhost:${PORT}`;
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
+  // Serveur de développement : chaque page est compilée à la première visite.
+  // Délais et parallélisme ajustés pour éviter les faux échecs sous charge (DT-031).
+  workers: 3,
+  timeout: 60_000,
+  expect: { timeout: 10_000 },
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",

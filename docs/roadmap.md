@@ -14,7 +14,7 @@ Chaque phase n'est terminée que lorsque ses critères sont vérifiés (typechec
 | 5 | Clients | Migration, CRUD, recherche, filtres, fiche client | CRUD + RLS + E2E | ✅ |
 | 6 | Projets | Migration, CRUD, statuts, budget, avancement, vue tableau + Kanban | CRUD + Kanban + RLS + E2E | ✅ |
 | 7 | Tâches | Migration, CRUD, priorités, retards, filtres | CRUD + filtres + RLS + E2E | ✅ |
-| 8 | Devis & PDF | Migration, RPC de calcul, numérotation, instantané, statuts, PDF | Tests de calcul (TS = SQL), PDF correct (accents, €), RLS + E2E | ⚪ |
+| 8 | Devis & PDF | Migration, RPC de calcul, numérotation, instantané, statuts, PDF | Tests de calcul (TS = SQL), PDF correct (accents, €), RLS + E2E | ✅ |
 | 9 | Tableau de bord | KPI réels, graphiques, activité récente (activity_logs) | Valeurs vérifiées contre la base | ⚪ |
 | 10 | Calendrier | Événements (migration + CRUD), vues mois / semaine, agrégation tâches / projets / devis | Affichage correct, fuseau Europe/Paris | ⚪ |
 | 11 | Statistiques | Graphiques Recharts sur données réelles | Valeurs vérifiées | ⚪ |

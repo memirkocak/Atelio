@@ -1,17 +1,22 @@
-import { ArrowLeft, FileText, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
-import { InfoItem, Panel, UpcomingNotice } from "@/components/shared/panel";
+import { InfoItem, Panel } from "@/components/shared/panel";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { ActivityTimeline } from "@/features/activity/components/activity-timeline";
 import { getEntityActivity } from "@/features/activity/queries";
 import { NewProjectButton } from "@/features/projects/components/new-project-button";
 import { ProjectDueDate, ProjectStatusBadge } from "@/features/projects/components/project-display";
 import { listProjectsForClient } from "@/features/projects/queries";
+import { NewQuoteLink } from "@/features/quotes/components/new-quote-link";
+import { QuoteStatusBadge } from "@/features/quotes/components/quote-display";
+import { listQuotesForClient } from "@/features/quotes/queries";
 import { getWorkspaceBySlug } from "@/features/workspaces/queries";
+import { formatIsoDate } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
+import { formatCents } from "@/lib/money";
 
 import { CLIENT_FIELD_LABELS, CLIENT_KIND_LABELS } from "../constants";
 import { getClient, listClientOptions } from "../queries";
@@ -30,10 +35,11 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
 
   const client = await getClient(workspace.id, id);
   if (!client) notFound();
-  const [activity, projects, clientOptions] = await Promise.all([
+  const [activity, projects, clientOptions, quotes] = await Promise.all([
     getEntityActivity(workspace.id, "client", id),
     listProjectsForClient(workspace.id, id),
     listClientOptions(workspace.id),
+    listQuotesForClient(workspace.id, id),
   ]);
 
   const name = clientDisplayName(client);
@@ -73,6 +79,7 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
             clientId={client.id}
             clientLabel={name}
             projectCount={projects.length}
+            quoteCount={quotes.length}
             defaultValues={toClientFormInput(client)}
           />
         </div>
@@ -144,8 +151,34 @@ export async function ClientDetailSection({ params }: { params: Promise<{ slug: 
             )}
           </Panel>
 
-          <Panel title="Devis">
-            <UpcomingNotice icon={FileText} text="Les devis de ce client apparaîtront ici avec le module Devis." />
+          <Panel
+            title={quotes.length > 0 ? `Devis (${quotes.length})` : "Devis"}
+            action={<NewQuoteLink clientId={client.id} variant="outline" />}
+          >
+            {quotes.length === 0 ? (
+              <p className="text-muted-foreground">Aucun devis pour ce client.</p>
+            ) : (
+              <ul className="-mx-2 divide-y">
+                {quotes.map((q) => (
+                  <li key={q.id}>
+                    <Link
+                      href={`/w/${slug}/devis/${q.id}`}
+                      className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md px-2 py-2.5 hover:bg-muted/50"
+                    >
+                      <span className="min-w-0 truncate">
+                        <span className="font-medium tabular-nums">{q.number}</span>
+                        <span className="text-muted-foreground"> · {q.title}</span>
+                      </span>
+                      <span className="flex items-center gap-3 text-xs">
+                        <span className="text-muted-foreground tabular-nums">{formatIsoDate(q.issue_date)}</span>
+                        <span className="font-medium tabular-nums">{formatCents(q.total_cents)}</span>
+                        <QuoteStatusBadge quote={q} />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </Panel>
         </div>
 

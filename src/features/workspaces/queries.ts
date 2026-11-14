@@ -29,6 +29,29 @@ export const getWorkspaceBySlug = cache(async (slug: string): Promise<WorkspaceS
   return data;
 });
 
+const SETTINGS_COLUMNS =
+  "id, name, slug, company_name, address_line, postal_code, city, country, email, phone, siret, vat_number, vat_exempt, default_vat_rate_bp, quote_validity_days, quote_terms, quote_footer";
+
+/** Paramètres complets de l'espace (émetteur des devis, préférences). */
+export async function getWorkspaceSettings(workspaceId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("workspaces").select(SETTINGS_COLUMNS).eq("id", workspaceId).single();
+  if (error) throw error;
+  return data;
+}
+
+/** Rôle de l'utilisateur courant dans l'espace (null s'il n'est pas membre). */
+export async function getMyRole(workspaceId: string, userId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("workspace_members")
+    .select("role")
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  return data?.role ?? null;
+}
+
 /**
  * Chemin d'accueil d'un utilisateur : le tableau de bord de son espace par défaut.
  * null si aucun espace (anomalie) : l'appelant doit fermer la session (voir /demarrage).

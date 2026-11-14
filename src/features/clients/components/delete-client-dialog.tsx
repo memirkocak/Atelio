@@ -12,6 +12,8 @@ type DeleteClientDialogProps = {
   clientLabel: string;
   /** Nombre de projets rattachés (ils seront détachés, pas supprimés). */
   projectCount?: number;
+  /** Devis rattachés : la suppression est alors impossible (historique commercial). */
+  quoteCount?: number;
   trigger: ReactNode;
   redirectTo?: string;
 };
@@ -21,6 +23,7 @@ export function DeleteClientDialog({
   clientId,
   clientLabel,
   projectCount = 0,
+  quoteCount = 0,
   trigger,
   redirectTo,
 }: DeleteClientDialogProps) {
@@ -34,6 +37,12 @@ export function DeleteClientDialog({
             « {clientLabel} » et ses informations seront définitivement supprimés. Cette action est
             irréversible.
           </p>
+          {quoteCount > 0 ? (
+            <p className="font-medium text-destructive">
+              Ce client a {quoteCount === 1 ? "1 devis" : `${quoteCount} devis`} : la suppression sera refusée afin de
+              conserver l’historique commercial.
+            </p>
+          ) : null}
           {projectCount > 0 ? (
             <p className="font-medium text-foreground">
               {projectCount === 1

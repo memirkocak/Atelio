@@ -65,7 +65,7 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-054 | Panneau de création / modification, suppression confirmée, notifications | ✅ |
 | B-055 | Fiche client : coordonnées, notes, historique, emplacements Projets / Devis | ✅ |
 | B-056 | Tests : 13 unitaires, 13 RLS, 8 E2E (+ test de non-régression de la boucle de redirection) | ✅ |
-| B-057 | Fiche client : lister les projets (✅ phase 6) et les devis (phase 8) du client | 🟡 |
+| B-057 | Fiche client : lister les projets (✅ phase 6) et les devis (✅ phase 8) du client | ✅ |
 
 ## Phase 6 — Projets
 
@@ -92,6 +92,21 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-074 | Fiche projet : tâches, compteur, ajout rapide ; avertissement à la suppression du projet | ✅ |
 | B-075 | Tests : 20 unitaires, 9 RLS, 8 E2E | ✅ |
 | B-076 | Personne assignée (avec la collaboration) | ⏸️ V2 |
+
+## Phase 8 — Devis et PDF
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-080 | Migration 0006 : `quotes`, `quote_items`, `quote_counters`, informations d'entreprise, fonctions `save_quote` / `set_quote_status` / `duplicate_quote` | ✅ |
+| B-081 | Calcul TypeScript (`BigInt`) + cas de référence partagés avec la base | ✅ |
+| B-082 | Tests base / sécurité (30) : calculs, numérotation concurrente, cycle de vie, instantanés, isolation | ✅ |
+| B-083 | Paramètres : informations de l'entreprise, franchise de TVA, valeurs par défaut des devis | ✅ |
+| B-084 | Liste, éditeur (totaux en direct), fiche avec aperçu et actions | ✅ |
+| B-085 | PDF (`@react-pdf/renderer`), vérifié caractère par caractère | ✅ |
+| B-086 | Fiche client : liste des devis, suppression bloquée annoncée | ✅ |
+| B-087 | Tests E2E (10) ; configuration Playwright adaptée au serveur de dev | ✅ |
+| B-088 | Remises, catalogue de prestations, envoi par e-mail | ⏸️ V2 |
+| B-089 | Transformer un devis accepté en facture | ⏸️ V2 |
 
 ## Phases suivantes (à détailler au moment venu)
 

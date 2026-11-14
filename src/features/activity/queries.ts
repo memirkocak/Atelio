@@ -3,7 +3,7 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database.types";
 
-export type ActivityEntityType = "client" | "project";
+export type ActivityEntityType = "client" | "project" | "task" | "quote";
 
 export type ActivityItem = Pick<
   Database["public"]["Tables"]["activity_logs"]["Row"],

@@ -2,14 +2,15 @@
 
 ## État actuel
 
-- **Phase 0 — Cadrage** : terminée (dépôt GitHub en attente, B-010).
+- **Phase 0 — Cadrage** : terminée.
 - **Phase 1 — Initialisation** : terminée.
 - **Phase 2 — Design global** : terminée.
 - **Phase 3 — Authentification** : terminée.
 - **Phase 4 — Base de données et espaces** : terminée.
 - **Phase 5 — Clients** : terminée.
 - **Phase 6 — Projets** : terminée.
-- **Phase 7 — Tâches** : terminée. Ajout rapide, case « terminée » avec annulation, priorités, échéances et retards, filtres, panneau de modification, tâches sur la fiche projet.
+- **Phase 7 — Tâches** : terminée.
+- **Phase 8 — Devis et PDF** : terminée. Paramètres de l'entreprise, éditeur avec totaux en direct, calculs et numérotation garantis par la base, envoi figé, accepté / refusé / expiré, duplication, PDF, devis sur la fiche client.
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -169,8 +170,26 @@
 - Tests : 12 unitaires (calcul), 30 tests base / sécurité (`tests/rls/quotes.test.ts`). Cible TypeScript ES2022. Décision DT-030.
 - Vérifications : typecheck, lint, build ✅ ; unitaires 108/108 ; RLS 83/83 ; E2E 41/41 (aucune régression).
 
+#### Tâche 9b — Devis : écrans et PDF (phase 8, partie b)
+- Paramètres de l'espace et de l'entreprise (`features/workspaces` : schéma, action, formulaire ; page `/parametres`).
+- `src/features/quotes/` : constantes, statut affiché, types, schémas (éditeur, URL, conversions), coordonnées du document, récapitulatif TVA, requêtes, actions, composants (éditeur, aperçu, actions, liste, barre d'outils, badge), PDF (`pdf/quote-pdf.tsx`) ; pages liste / nouveau / fiche / modifier et Route Handler PDF.
+- Fiche client : devis du client ; avertissement de suppression.
+- Dépendance : `@react-pdf/renderer` 4.9.0 (prévue en DT-009).
+- Problèmes rencontrés et corrigés : `runtime` interdit avec `cacheComponents` ; césure anglaise dans le PDF ; écart d'hydratation du Kanban (`DndContext` sans `id`) ; faux échecs E2E sous charge (configuration Playwright).
+- Décision DT-031.
+
+**Vérifications (tâche 9b)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 108/108 |
+| `npm run test:rls` | ✅ 83/83 |
+| `npm run test:e2e` | ✅ 51/51 sur deux passages consécutifs (dont 10 devis : paramètres, création avec totaux 1 630,00 € attendus, modification, envoi figé, PDF `%PDF-`, acceptation, duplication, expiré, client protégé, suppression, mobile, isolation page + PDF) |
+| PDF | ✅ contenu extrait et vérifié (montants, mentions, caractères €, ’, —, « ») ; rendu visuel non affichable dans l'outil (à contrôler par l'utilisateur) |
+| Navigateur | ✅ fiche et aperçu (1440 px), éditeur mobile (375 px, sans débordement) |
+
 ## Prochaine étape
 
-**Phase 8b — Devis : écrans et PDF** (paramètres de l'entreprise, liste, éditeur, fiche, PDF, tests E2E).
+**Phase 9 — Tableau de bord** : indicateurs réels (clients, projets en cours, tâches à terminer et en retard, devis en attente, chiffre d'affaires suivi = devis acceptés, pipeline = devis envoyés non expirés), graphiques d'activité (Recharts), activité récente à partir du journal. À présenter en détail avant exécution.
 
-**Phase 8 — Devis et PDF** (rappel) : migration `quotes` / `quote_items` / numérotation (`DEV-AAAA-NNNN`), calculs HT / TVA / TTC dans une fonction Postgres qui fait foi (et le même calcul en TypeScript pour l'aperçu), instantané du client à l'envoi, statuts (brouillon, envoyé, accepté, refusé, expiré calculé), devis non modifiable hors brouillon, suppression d'un client bloquée s'il a des devis, génération du PDF (`@react-pdf/renderer`, police embarquée). C'est le module le plus sensible : à présenter en détail avant exécution.
+**Phase 8 — Devis et PDF** (rappel de conception) : migration `quotes` / `quote_items` / numérotation (`DEV-AAAA-NNNN`), calculs HT / TVA / TTC dans une fonction Postgres qui fait foi (et le même calcul en TypeScript pour l'aperçu), instantané du client à l'envoi, statuts (brouillon, envoyé, accepté, refusé, expiré calculé), devis non modifiable hors brouillon, suppression d'un client bloquée s'il a des devis, génération du PDF (`@react-pdf/renderer`, police embarquée). C'est le module le plus sensible : à présenter en détail avant exécution.

@@ -255,3 +255,16 @@ _14/11/2026 — validée_
 - Informations de l'entreprise (émetteur) ajoutées à `workspaces` (raison sociale, adresse, contact, SIRET à 14 chiffres, n° de TVA, validité par défaut, conditions, mentions de bas de page), modifiables par owner / admin (droits par colonne).
 - Erreurs métier : `AT001` devis non modifiable, `AT002` introuvable, `AT003` transition impossible, `AT004` lignes invalides.
 - `tsconfig` : cible passée de ES2017 à **ES2022** (littéraux `BigInt`). Après un tel changement, supprimer `tsconfig.tsbuildinfo` et `.next/cache/.tsbuildinfo` (caches incrémentaux qui conservent l'ancienne cible).
+
+### DT-031 — Devis : écrans, PDF et paramètres (phase 8b)
+_14/11/2026 — validée_
+
+- **Paramètres** (`/w/[slug]/parametres`) : nom de l'espace, informations de l'entreprise (raison sociale, adresse, contact, SIRET validé à 14 chiffres, n° de TVA), franchise de TVA (interrupteur), taux de TVA par défaut, durée de validité, conditions par défaut, mentions de bas de page. Modifiable par owner / admin (lecture seule sinon).
+- **Éditeur** sur une page dédiée (`/devis/nouveau`, `/devis/[id]/modifier`, brouillons uniquement — sinon redirection vers la fiche) : `useFieldArray`, lignes ajoutables / réordonnables / supprimables, unités suggérées (`datalist`), totaux et récapitulatif de TVA en direct (calcul `BigInt` identique à la base), barre d'actions collante. Le navigateur n'envoie **aucun montant**.
+- **Fiche devis** : aperçu HTML fidèle au PDF (mêmes montants enregistrés), actions selon le statut (modifier, marquer comme envoyé avec confirmation, accepté / refusé, PDF, dupliquer, supprimer un brouillon), mention « devis figé » après envoi, historique.
+- **Coordonnées affichées** (`features/quotes/document.ts`) : instantanés figés s'ils existent (devis envoyé), sinon données actuelles (brouillon).
+- **PDF** (`/w/[slug]/devis/[id]/pdf`, Route Handler, `@react-pdf/renderer` 4.9) : Helvetica intégrée (WinAnsi : accents, €, ’, —, « » vérifiés dans le flux du PDF) ; l'espace fine insécable d'`Intl` (U+202F, absente de WinAnsi) est remplacée par une espace insécable ; **césure automatique désactivée** (règles anglaises par défaut) ; filigrane « BROUILLON » ; en-tête répété sur plusieurs pages ; numéro de page. Accès vérifié comme les pages (session + RLS, 404 sinon). L'option `export const runtime` est interdite avec `cacheComponents` (le runtime Node est celui par défaut).
+- Liste : recherche (numéro, objet), filtres statut (dont « Expiré » dérivé) et client, tableau / cartes mobiles. Fiche client : liste de ses devis, bouton « Nouveau devis » prérempli, avertissement : suppression refusée tant que des devis existent.
+- Correction d'un écart d'hydratation du Kanban (phase 6) : `DndContext` reçoit un `id` stable (`useId`).
+- **Tests E2E** : serveur de développement compilant à la volée → `workers: 3`, `timeout: 60 s`, `expect.timeout: 10 s` (faux échecs sous charge avec 4 navigateurs et 5 s).
+- La suppression d'un espace contenant des devis fonctionne en cascade malgré le `RESTRICT` client → devis (vérifié).

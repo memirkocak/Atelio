@@ -16,7 +16,7 @@ import {
 } from "@dnd-kit/core";
 import { GripVertical, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { useOptimistic, useState, useTransition } from "react";
+import { useId, useOptimistic, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,7 @@ export function ProjectsBoard({ projects, slug }: { projects: ProjectListItem[];
     state.map((p) => (p.id === move.id ? { ...p, status: move.status } : p)),
   );
   const [activeId, setActiveId] = useState<string | null>(null);
+  const dndId = useId();
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
@@ -101,6 +102,8 @@ export function ProjectsBoard({ projects, slug }: { projects: ProjectListItem[];
 
   return (
     <DndContext
+      // Identifiant stable serveur / navigateur (sinon écart d'hydratation sur aria-describedby)
+      id={dndId}
       sensors={sensors}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
