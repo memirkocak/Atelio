@@ -268,3 +268,14 @@ _14/11/2026 — validée_
 - Correction d'un écart d'hydratation du Kanban (phase 6) : `DndContext` reçoit un `id` stable (`useId`).
 - **Tests E2E** : serveur de développement compilant à la volée → `workers: 3`, `timeout: 60 s`, `expect.timeout: 10 s` (faux échecs sous charge avec 4 navigateurs et 5 s).
 - La suppression d'un espace contenant des devis fonctionne en cascade malgré le `RESTRICT` client → devis (vérifié).
+
+### DT-032 — Tableau de bord : agrégats SQL et Recharts (phase 9)
+_14/11/2026 — validée_
+
+- **Une fonction de lecture** `public.get_dashboard_stats(workspace_id) → jsonb` (migration 0007) : PostgREST n'expose pas `sum()` par défaut, et télécharger tous les devis pour les additionner côté Next serait coûteux. **SECURITY INVOKER** (la RLS des tables s'applique) + contrôle explicite `private.is_workspace_member` → `42501` pour un espace étranger ; exécutable par `authenticated` uniquement. Réponse validée par Zod (`features/dashboard/schemas.ts`).
+- **Définitions** : projets en cours = statut `in_progress` ; tâches à terminer = non terminées, en retard = échéance strictement passée ; devis en attente / pipeline = envoyés et `valid_until >= aujourd'hui` ; **CA suivi = tous les devis acceptés** (HT et TTC), **rattachés au mois de leur acceptation** (`accepted_at`, choix validé par l'utilisateur).
+- **Fuseau** : jour, mois et semaines (lundi → dimanche) calculés en heure de Paris dans la base ; testé avec un devis accepté à 00 h 30 le 1er du mois (veille en UTC).
+- Séries complétées à zéro en SQL (`generate_series`) : 6 mois, 8 semaines.
+- **Recharts 3.8** via `npx shadcn@4.23.0 add chart` (composant `chart.tsx`, prévu dans la stack ; `globals.css` inchangé, couleurs `--chart-*` existantes). Graphiques dans un composant client ; résumé textuel `sr-only` pour les lecteurs d'écran.
+- **Activité récente** : 10 derniers événements de `activity_logs` ; existence actuelle de chaque élément vérifiée (une requête par type) → lien vers la fiche, sinon libellé conservé sans lien. Les transitions de devis sont reconnues à leurs colonnes (`sent_at`, `accepted_at`, `refused_at`) → « Devis envoyé / accepté / refusé ». Les tâches n'ont pas de page de détail : pas de lien.
+- Tests E2E : une insertion groupée supabase-js envoie `NULL` pour les colonnes absentes d'une ligne → toujours fournir les mêmes colonnes. Avec le rendu en streaming, une 404 se vérifie par le contenu (« Page introuvable ») et non par le statut HTTP.

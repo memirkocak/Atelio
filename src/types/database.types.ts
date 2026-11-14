@@ -577,6 +577,7 @@ export type Database = {
         Args: { p_quote_id: string; p_workspace_id: string }
         Returns: string
       }
+      get_dashboard_stats: { Args: { p_workspace_id: string }; Returns: Json }
       save_quote: {
         Args: {
           p_items: Json

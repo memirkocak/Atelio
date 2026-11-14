@@ -11,6 +11,7 @@
 - **Phase 6 — Projets** : terminée.
 - **Phase 7 — Tâches** : terminée.
 - **Phase 8 — Devis et PDF** : terminée. Paramètres de l'entreprise, éditeur avec totaux en direct, calculs et numérotation garantis par la base, envoi figé, accepté / refusé / expiré, duplication, PDF, devis sur la fiche client.
+- **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -188,8 +189,30 @@
 | PDF | ✅ contenu extrait et vérifié (montants, mentions, caractères €, ’, —, « ») ; rendu visuel non affichable dans l'outil (à contrôler par l'utilisateur) |
 | Navigateur | ✅ fiche et aperçu (1440 px), éditeur mobile (375 px, sans débordement) |
 
+### Session 3 — 14/11/2026
+
+#### Tâche 10 — Tableau de bord (phase 9)
+- Migration 0007 `get_dashboard_stats` (SECURITY INVOKER, contrôle d'appartenance, jour / mois / semaines de Paris, séries complétées à zéro) ; aperçu `--dry-run` puis application ; types régénérés.
+- `src/features/dashboard/` : schéma Zod de la réponse, séries et libellés, requêtes (indicateurs, activité récente avec existence des éléments), composants (cartes d'indicateurs, graphiques, flux d'activité, squelette) ; page `/w/[slug]/tableau-de-bord`.
+- Choix validé : CA suivi rattaché au mois d'**acceptation** du devis.
+- Dépendance : `recharts` 3.8.0 via `shadcn add chart` (`globals.css` inchangé).
+- Flux d'activité : « Devis envoyé / accepté / refusé » reconnus à partir des colonnes modifiées (au lieu de « Devis modifié · coordonnées client… »).
+- Problèmes rencontrés : insertion groupée supabase-js (colonnes absentes envoyées à NULL) et 404 en streaming (statut 200) dans le test E2E ; un faux échec E2E des devis sous charge (bouton encore en cours d'envoi), passé au relancement seul puis sur la suite complète.
+- Décision DT-032.
+
+**Vérifications (tâche 10)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 119/119 (dont 11 tableau de bord : schéma, séries, libellés d'activité) |
+| `npm run test:rls` | ✅ 94/94 (dont 11 tableau de bord : valeurs exactes, fuseau de Paris au 1er du mois, isolation, anonyme refusé) |
+| `npm run test:e2e` | ✅ 56/56 sur la suite complète (dont 5 tableau de bord : état vide, valeurs après rechargement, liens filtrés, élément supprimé sans lien, mobile, autre espace introuvable) ; 1er passage : 1 faux échec devis sous charge |
+| Navigateur | ✅ compte temporaire avec données : valeurs conformes au jeu de données (CA 9 450 € HT / 11 340 € TTC, mois, pipeline, semaines), 1440 px et 375 px sans débordement, aucune erreur console ; compte supprimé |
+
+**Points ouverts**
+- Mobile : les 6 cartes sont empilées sur une colonne (lisible mais long) ; possible passage à 2 colonnes lors de la finition (phase 12).
+- Les tâches n'ont pas de page de détail : pas de lien dans le flux d'activité.
+
 ## Prochaine étape
 
-**Phase 9 — Tableau de bord** : indicateurs réels (clients, projets en cours, tâches à terminer et en retard, devis en attente, chiffre d'affaires suivi = devis acceptés, pipeline = devis envoyés non expirés), graphiques d'activité (Recharts), activité récente à partir du journal. À présenter en détail avant exécution.
-
-**Phase 8 — Devis et PDF** (rappel de conception) : migration `quotes` / `quote_items` / numérotation (`DEV-AAAA-NNNN`), calculs HT / TVA / TTC dans une fonction Postgres qui fait foi (et le même calcul en TypeScript pour l'aperçu), instantané du client à l'envoi, statuts (brouillon, envoyé, accepté, refusé, expiré calculé), devis non modifiable hors brouillon, suppression d'un client bloquée s'il a des devis, génération du PDF (`@react-pdf/renderer`, police embarquée). C'est le module le plus sensible : à présenter en détail avant exécution.
+**Phase 10 — Calendrier** : migration `events` (rendez-vous en `timestamptz`, RLS, journal), CRUD, vues mois / semaine sur mesure (date-fns, fuseau Europe/Paris), agrégation des échéances de tâches et projets et des validités de devis. À présenter en détail avant exécution.

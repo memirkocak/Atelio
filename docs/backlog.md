@@ -108,6 +108,16 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-088 | Remises, catalogue de prestations, envoi par e-mail | ⏸️ V2 |
 | B-089 | Transformer un devis accepté en facture | ⏸️ V2 |
 
+## Phase 9 — Tableau de bord
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-090 | Migration 0007 : fonction `get_dashboard_stats` (SECURITY INVOKER, jour de Paris, séries complétées à zéro) | ✅ |
+| B-091 | 6 cartes d'indicateurs reliées aux listes filtrées (dont tâches en retard, CA suivi HT / TTC, pipeline) | ✅ |
+| B-092 | Graphiques Recharts (shadcn `chart`) : CA accepté par mois (6 mois), tâches terminées par semaine (8 semaines), résumé accessible | ✅ |
+| B-093 | Flux d'activité récente de l'espace (10 événements, lien si l'élément existe encore) | ✅ |
+| B-094 | Tests : 11 unitaires, 11 RLS (valeurs exactes, fuseau, isolation), 5 E2E | ✅ |
+
 ## Phases suivantes (à détailler au moment venu)
 
 - Phase 6 — Projets (tableau + Kanban)
