@@ -1,16 +1,19 @@
-import { BarChart3 } from "lucide-react";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { ModulePlaceholder } from "@/components/layout/module-placeholder";
+import { PageContainer } from "@/components/layout/page-container";
+import { PageHeader } from "@/components/shared/page-header";
+import { StatsSection, StatsSkeleton } from "@/features/stats/components/stats-section";
 
 export const metadata: Metadata = { title: "Statistiques" };
 
-export default function Page() {
+export default function StatsPage({ params, searchParams }: PageProps<"/w/[slug]/statistiques">) {
   return (
-    <ModulePlaceholder
-      title="Statistiques"
-      description="Indicateurs et évolution de votre activité."
-      icon={BarChart3}
-    />
+    <PageContainer>
+      <PageHeader title="Statistiques" description="Évolution de votre activité, calculée sur vos données réelles." />
+      <Suspense fallback={<StatsSkeleton />}>
+        <StatsSection params={params} searchParams={searchParams} />
+      </Suspense>
+    </PageContainer>
   );
 }

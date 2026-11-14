@@ -648,6 +648,10 @@ export type Database = {
         Returns: string
       }
       get_dashboard_stats: { Args: { p_workspace_id: string }; Returns: Json }
+      get_statistics: {
+        Args: { p_from: string; p_to: string; p_workspace_id: string }
+        Returns: Json
+      }
       save_quote: {
         Args: {
           p_items: Json

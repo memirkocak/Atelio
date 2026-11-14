@@ -291,3 +291,14 @@ _14/11/2026 — validée_
 - **État dans l'URL** (`view`, `date`, `hide`) : navigation et filtres sont des liens (rendu serveur), seuls le panneau et ses déclencheurs sont côté client. Valeurs invalides → valeurs par défaut.
 - Liens : projet et devis vers leur fiche ; tâche vers la liste filtrée sur son titre (pas de fiche) ; rendez-vous → panneau de modification.
 - `addDaysIso` déplacé dans `src/lib/dates.ts` (réexporté par `features/tasks/status.ts`).
+
+### DT-034 — Statistiques : périodes, comparaison et définitions (phase 11)
+_14/11/2026 — validée_
+
+- **Fonction** `public.get_statistics(workspace_id, du, au) → jsonb` (migration 0009), même modèle que DT-032 : SECURITY INVOKER, contrôle `private.is_workspace_member` (42501), période invalide ou > 1 100 jours → `22023`, réponse validée par Zod. Appelée **deux fois** (période + période de comparaison).
+- **Dates de référence** (bornes en heure de Paris, incluses) : devis créés = date d'émission (brouillons compris) ; acceptés / refusés = date de décision ; expirés = envoyés sans réponse dont la validité a pris fin pendant la période (et avant aujourd'hui) ; projets et tâches terminés = `completed_at` ; actions = `activity_logs`.
+- **Taux d'acceptation** = acceptés ÷ (acceptés + refusés + expirés sans réponse) — choix validé (un devis resté sans réponse est un échec) ; « — » sans décision ; comparaison en points. **Panier moyen** = CA accepté HT ÷ nombre d'acceptés.
+- **Périodes** (`?periode=`) : 30 derniers jours ; 3 mois = 13 semaines à partir d'un lundi ; 6 et 12 mois à partir du 1er du mois ; année en cours ; année précédente. Comparaison : période de même durée qui précède, ou mêmes dates de l'année précédente pour les années (29 février → 28 février).
+- **Séries** complétées à zéro : par semaine (lundi) jusqu'à 92 jours, par mois au-delà. **État actuel** (tâches par statut / priorité, projets par statut) indépendant de la période. **Meilleurs clients** : 5 premiers par CA HT accepté.
+- Variation affichée « Nouveau » quand la période de comparaison valait 0 (pas de pourcentage infini).
+- `ModulePlaceholder` supprimé : toutes les pages de modules sont réelles.

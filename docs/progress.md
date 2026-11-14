@@ -13,6 +13,7 @@
 - **Phase 8 — Devis et PDF** : terminée. Paramètres de l'entreprise, éditeur avec totaux en direct, calculs et numérotation garantis par la base, envoi figé, accepté / refusé / expiré, duplication, PDF, devis sur la fiche client.
 - **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
 - **Phase 10 — Calendrier** : terminée. Rendez-vous (horaire ou journée entière, lieu, client, projet), vues mois et semaine (agenda), échéances des tâches, projets et devis envoyés, filtres par type.
+- **Phase 11 — Statistiques** : terminée. Indicateurs d'une période (CA, taux d'acceptation, panier moyen, devis, projets, tâches, actions) comparés à la période précédente, graphiques, meilleurs clients, état actuel des tâches et projets.
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -237,6 +238,26 @@
 - Pas de glisser-déposer ni de rendez-vous récurrents (V2).
 - Les tâches et rendez-vous n'ont pas de page de détail : la tâche mène à la liste filtrée, le rendez-vous s'ouvre dans le panneau.
 
+#### Tâche 12 — Statistiques (phase 11)
+- Migration 0009 `get_statistics(workspace_id, du, au)` (SECURITY INVOKER, contrôle d'appartenance, bornes en heure de Paris, période ≤ 3 ans, séries par semaine jusqu'à 92 jours puis par mois, état actuel, 5 meilleurs clients) ; aperçu `--dry-run` puis application ; types régénérés.
+- `src/features/stats/` : périodes (30 jours, 3 / 6 / 12 mois, année en cours, année précédente) et périodes de comparaison, variations, taux d'acceptation, panier moyen, schéma Zod, séries et répartitions, requêtes, composants (sélecteur de période, indicateurs, graphiques, meilleurs clients) ; page `/w/[slug]/statistiques`.
+- Choix validés : taux d'acceptation = acceptés ÷ (acceptés + refusés + expirés sans réponse) ; comparaison avec la période précédente.
+- `ModulePlaceholder` supprimé (plus aucune page en attente). Aucune nouvelle dépendance.
+- Décision DT-034.
+
+**Vérifications (tâche 12)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ (après correction d'un type dans un test RLS) |
+| `npm test` | ✅ 154/154 (dont 13 statistiques : périodes, 29 février, variations, taux, panier, libellés) |
+| `npm run test:rls` | ✅ 115/115 (dont 12 statistiques : valeurs exactes, 31 décembre 23 h 30 / 1er janvier 00 h 30 à Paris, semaines, période vide ou invalide, isolation, anonyme) |
+| `npm run test:e2e` | ✅ 68/68 sur la suite complète, premier passage (dont 5 statistiques : état vide, valeurs après rechargement, meilleurs clients, changement de période, mobile, isolation) |
+| Navigateur | ✅ 12 mois et 3 mois (semaines), ordinateur et mobile sans débordement, aucune erreur console ; compte temporaire supprimé |
+
+**Points ouverts**
+- Pas de période personnalisée ni d'export CSV (V2, B-114).
+- Les dates de fin des tâches et projets n'existent que depuis les migrations 0004 / 0005 : les éléments terminés avant (aucun en production) n'apparaissent pas dans les séries.
+
 ## Prochaine étape
 
-**Phase 11 — Statistiques** : graphiques Recharts sur données réelles (évolution des devis créés / acceptés et montants, taux d'acceptation, panier moyen, projets terminés, répartition des tâches par statut et priorité, activité), avec période choisie. À présenter en détail avant exécution.
+**Phase 12 — Finalisation et mise en ligne** (à découper en sous-tâches) : mode démo (compte pré-rempli, bandeau, bouton « Essayer la démo », réinitialisation nocturne), cron Vercel (maintien du projet Supabase), accessibilité et finitions (cartes du tableau de bord sur 2 colonnes en mobile…), projet Supabase `atelio-prod`, SMTP et modèles d'e-mails français (optionnel), déploiement Vercel, README portfolio. À présenter en détail avant exécution.

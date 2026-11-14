@@ -130,12 +130,16 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-105 | Tests : 22 unitaires, 9 RLS, 8 E2E | ✅ |
 | B-106 | Glisser-déposer, rendez-vous récurrents, invitations | ⏸️ V2 |
 
+## Phase 11 — Statistiques
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-110 | Migration 0009 : fonction `get_statistics` (période, séries, état actuel, meilleurs clients) | ✅ |
+| B-111 | Périodes et comparaison, taux d'acceptation (expirés inclus), panier moyen, variations | ✅ |
+| B-112 | Page : sélecteur de période (URL), 8 indicateurs, 3 graphiques temporels, 3 répartitions, meilleurs clients | ✅ |
+| B-113 | Tests : 13 unitaires, 12 RLS, 5 E2E | ✅ |
+| B-114 | Export CSV, période personnalisée | ⏸️ V2 |
+
 ## Phases suivantes (à détailler au moment venu)
 
-- Phase 6 — Projets (tableau + Kanban)
-- Phase 7 — Tâches
-- Phase 8 — Devis & PDF
-- Phase 9 — Tableau de bord
-- Phase 10 — Calendrier
-- Phase 11 — Statistiques
 - Phase 12 — Finalisation : paramètres, mode démo (seed, bandeau, reset nocturne), cron keep-alive, SMTP Resend (optionnel), déploiement Vercel, README portfolio
