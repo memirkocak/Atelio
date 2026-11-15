@@ -16,3 +16,16 @@ test("une URL inconnue affiche la page 404 en français", async ({ page }) => {
   await page.getByRole("link", { name: "Retour à l’accueil" }).click();
   await expect(page).toHaveURL("/");
 });
+
+test("en-têtes de sécurité présents sur les réponses", async ({ request }) => {
+  for (const path of ["/", "/connexion"]) {
+    const response = await request.get(path);
+    const headers = response.headers();
+    expect(headers["x-frame-options"]).toBe("DENY");
+    expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+    expect(headers["x-content-type-options"]).toBe("nosniff");
+    expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+    expect(headers["permissions-policy"]).toContain("camera=()");
+    expect(headers["x-powered-by"]).toBeUndefined();
+  }
+});
