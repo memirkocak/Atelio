@@ -161,6 +161,17 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-133 | Tests : 3 unitaires, 10 RLS, 8 E2E | ✅ |
 | B-134 | Conversion d'une session de démo en vrai compte (conserver les données) | ⏸️ V2 |
 
+## Phase 12c — Projet de production
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-140 | Projet `atelio-prod` (Paris) créé par l'utilisateur | ✅ |
+| B-141 | Migrations 0001 à 0012 appliquées en prod (aperçu puis application) | ✅ |
+| B-142 | Configuration auth de la prod (`[remotes.production]`, option A sans confirmation e-mail) | ✅ |
+| B-143 | Contrôles réels (RLS sans session, démo, protections) avec la clé publique | ✅ |
+| B-144 | `site_url` / redirections de la prod vers l'URL Vercel | ⏳ 12d |
+| B-145 | Confirmation par e-mail en prod (SMTP + domaine) | ⏸️ 12f |
+
 ## Phases suivantes (à détailler au moment venu)
 
 - Phase 12 — Finalisation : paramètres, mode démo (seed, bandeau, reset nocturne), cron keep-alive, SMTP Resend (optionnel), déploiement Vercel, README portfolio

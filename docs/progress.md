@@ -14,7 +14,7 @@
 - **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
 - **Phase 10 — Calendrier** : terminée. Rendez-vous (horaire ou journée entière, lieu, client, projet), vues mois et semaine (agenda), échéances des tâches, projets et devis envoyés, filtres par type.
 - **Phase 11 — Statistiques** : terminée. Indicateurs d'une période (CA, taux d'acceptation, panier moyen, devis, projets, tâches, actions) comparés à la période précédente, graphiques, meilleurs clients, état actuel des tâches et projets.
-- **Phase 12 — Finalisation** : en cours. 12a (finitions) et 12b (mode démo : bac à sable privé par visiteur) terminées ; restent 12c projet de production, 12d déploiement, 12e README, 12f e-mails (optionnel).
+- **Phase 12 — Finalisation** : en cours. 12a (finitions), 12b (mode démo) et 12c (projet de production `atelio-prod`) terminées ; restent 12d déploiement, 12e README, 12f e-mails (optionnel).
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -304,6 +304,29 @@
 - Le cron n'est actif qu'une fois déployé sur Vercel (12d) ; d'ici là, les sessions de démo locales ne sont pas purgées automatiquement.
 - `db lint` signale deux variables inutilisées dans `seed_demo_workspace` (sans effet).
 
+#### Tâche 15 — Projet de production (phase 12c)
+- Projet `atelio-prod` créé par l'utilisateur (ref `klcrksxjyhydxtczqquh`, Paris `eu-west-3`, plan gratuit).
+- CLI liée temporairement à la prod : `db push --dry-run` (12 migrations attendues) puis `db push` : migrations 0001 à 0012 appliquées sans erreur ; `migration list` aligné ; `db lint` : seulement les deux avertissements connus.
+- Configuration : bloc `[remotes.production]` dans `supabase/config.toml` ; `config diff` relu (5 écarts attendus : confirmation par e-mail désactivée — option A —, connexion anonyme, mot de passe 8 caractères lettres + chiffres, redirections) puis `config push` ; diff final à zéro.
+- Contrôles réels sur la prod avec la **clé publique** seulement (récupérée par la CLI, jamais affichée ; clé secrète non utilisée) : sans session tout est refusé (42501), session de démo créée en 214 ms avec l'espace rempli (8 clients, 3 tâches en retard, 7 devis acceptés), suppression du compte démo refusée (AT010), purge refusée aux visiteurs.
+- CLI reliée au dev et vérifiée (projet « Atelio », 12 migrations alignées, config identique).
+- `CLAUDE.md` : référence de la prod et procédure « appliquer en prod ». Décision DT-037.
+
+**Vérifications (tâche 15)**
+| Vérification | Résultat |
+|---|---|
+| Migrations prod | ✅ 12/12 appliquées, alignées avec le dépôt |
+| `db lint` prod | ✅ aucune erreur (2 avertissements connus) |
+| Config auth prod | ✅ diff à zéro après `config push` |
+| RLS prod (sans session) | ✅ refus sur workspaces, clients, quotes, activity_logs, purge |
+| Démo prod | ✅ session anonyme + espace rempli, protections actives |
+| CLI | ✅ reliée au dev après l'opération |
+
+**Points ouverts**
+- `site_url` et redirections de la prod pointent encore vers `localhost` : à remplacer par l'URL Vercel en 12d.
+- Une session de démo de contrôle existe en prod : elle sera purgée par le cron (actif après le déploiement 12d).
+- Projet gratuit : mis en pause après 7 jours sans activité tant que le cron n'est pas déployé.
+
 ## Prochaine étape
 
-**12c — Projet de production** : création par l'utilisateur du projet Supabase `atelio-prod` (région Paris), liaison, application des migrations 0001 à 0012, configuration de l'authentification (confirmation par e-mail, connexion anonyme, URL du site), vérifications. À présenter en détail avant exécution.
+**12d — Déploiement Vercel** : import du dépôt GitHub sur Vercel (par l'utilisateur), variables d'environnement de production (clés `atelio-prod`, `CRON_SECRET`, URL du site) saisies par l'utilisateur dans Vercel, premier déploiement, mise à jour de `site_url` / redirections de la prod, vérification en ligne (inscription, connexion, démo, PDF, cron). À présenter en détail avant exécution.

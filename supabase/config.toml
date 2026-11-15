@@ -441,3 +441,12 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+# -----------------------------------------------------------------------------
+# Projet de production « atelio-prod » (Paris). Seuls les réglages propres à la prod
+# sont surchargés ici ; tout le reste vient de la configuration ci-dessus (DT-037).
+# site_url / additional_redirect_urls : à remplacer par l'URL Vercel en 12d.
+# Confirmation par e-mail : désactivée (option A) tant qu'aucun SMTP n'est configuré (12f).
+# -----------------------------------------------------------------------------
+[remotes.production]
+project_id = "klcrksxjyhydxtczqquh"

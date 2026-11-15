@@ -48,9 +48,10 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 
 ## Infrastructure
 
-- Supabase cloud, plan gratuit, **deux projets** : dev = « Atelio » (ref `sngvhoygizlvxwwqnsyi`, lié à la CLI ; développement + tests) et `atelio-prod` (production, créé en phase 12).
+- Supabase cloud, plan gratuit, **deux projets** : dev = « Atelio » (ref `sngvhoygizlvxwwqnsyi`, Londres, **lié à la CLI en permanence** ; développement + tests) et prod = `atelio-prod` (ref `klcrksxjyhydxtczqquh`, Paris ; aucune donnée de test, jamais de tests RLS / E2E dessus).
 - Session : toujours lue dans une frontière `<Suspense>` via `requireUser()` / `getCurrentUser()` (`src/lib/auth/session.ts`), qui appellent `connection()` puis `getClaims()`.
-- Toute modification du schéma passe par une migration SQL versionnée dans `supabase/migrations/`, appliquée d'abord sur dev, puis sur prod.
+- Toute modification du schéma passe par une migration SQL versionnée dans `supabase/migrations/`, appliquée d'abord sur dev, puis sur prod. Après une migration plpgsql : `npx supabase db lint --remote --schema private,public`.
+- **Appliquer en prod** (avec le « go » de l'utilisateur) : `npx supabase link --project-ref klcrksxjyhydxtczqquh --yes` → `db push --remote --dry-run` → `db push --remote --yes` → `config diff` relu → `config push --yes` si besoin → contrôles → **toujours** `npx supabase link --project-ref sngvhoygizlvxwwqnsyi --yes` et vérifier que la CLI est revenue sur le dev (`npx supabase projects list`). Réglages propres à la prod : bloc `[remotes.production]` de `supabase/config.toml`.
 - Les secrets (mot de passe BDD, clés, tokens) sont saisis **par l'utilisateur** dans `.env.local` ou via `npx supabase login`. Ils ne transitent jamais par le chat et ne sont jamais committés.
 
 ## Conventions
