@@ -445,8 +445,11 @@ enabled = true
 # -----------------------------------------------------------------------------
 # Projet de production « atelio-prod » (Paris). Seuls les réglages propres à la prod
 # sont surchargés ici ; tout le reste vient de la configuration ci-dessus (DT-037).
-# site_url / additional_redirect_urls : à remplacer par l'URL Vercel en 12d.
 # Confirmation par e-mail : désactivée (option A) tant qu'aucun SMTP n'est configuré (12f).
 # -----------------------------------------------------------------------------
 [remotes.production]
 project_id = "klcrksxjyhydxtczqquh"
+
+[remotes.production.auth]
+site_url = "https://atelio-inoe.vercel.app"
+additional_redirect_urls = ["https://atelio-inoe.vercel.app/**"]
