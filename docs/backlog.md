@@ -183,6 +183,13 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-154 | Test manuel d'inscription en production | ⏳ utilisateur |
 | B-155 | Content-Security-Policy complète (nonces) | ⏸️ V2 |
 
+## Phase 12e — README
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-160 | README portfolio (présentation, captures, points techniques, installation, tests) | ✅ |
+| B-161 | Captures d'écran (`docs/screenshots/`) | ✅ |
+
 ## Phases suivantes (à détailler au moment venu)
 
 - Phase 12 — Finalisation : paramètres, mode démo (seed, bandeau, reset nocturne), cron keep-alive, SMTP Resend (optionnel), déploiement Vercel, README portfolio

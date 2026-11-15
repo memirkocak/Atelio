@@ -14,7 +14,7 @@
 - **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
 - **Phase 10 — Calendrier** : terminée. Rendez-vous (horaire ou journée entière, lieu, client, projet), vues mois et semaine (agenda), échéances des tâches, projets et devis envoyés, filtres par type.
 - **Phase 11 — Statistiques** : terminée. Indicateurs d'une période (CA, taux d'acceptation, panier moyen, devis, projets, tâches, actions) comparés à la période précédente, graphiques, meilleurs clients, état actuel des tâches et projets.
-- **Phase 12 — Finalisation** : en cours. 12a (finitions), 12b (mode démo), 12c (projet de production) et 12d (déploiement : https://atelio-inoe.vercel.app) terminées ; restent 12e README, 12f e-mails (optionnel).
+- **Phase 12 — Finalisation** : en cours. 12a (finitions), 12b (mode démo), 12c (projet de production) et 12d (déploiement : https://atelio-inoe.vercel.app) et 12e (README portfolio) terminées ; reste 12f e-mails (optionnel).
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -348,6 +348,15 @@
 - Les sessions de démo de contrôle (12c, 12d) seront purgées par le cron de la nuit.
 - Le menu « Cron Jobs » n'était pas visible dans l'interface Vercel : le cron est déclaré dans `vercel.json` ; son exécution quotidienne sera visible dans les journaux du projet.
 
+#### Tâche 17 — README portfolio (phase 12e)
+- `README.md` (français) : présentation et liens (site, démo), badges, captures, fonctionnalités, points techniques (RLS testée, montants garantis par la base, fuseau de Paris, démo privée, accessibilité), stack, schéma d'architecture (Mermaid), lancement en local, tests, structure du dépôt, liens vers la documentation.
+- Captures `docs/screenshots/` (7 images : tableau de bord, devis, Kanban, calendrier, statistiques, deux vues mobiles) prises sur le dev avec une session de démo, indicateur de développement Next masqué ; script temporaire supprimé, session de démo nettoyée.
+- Chiffres vérifiés contre le dépôt (393 tests, 38 décisions, 12 migrations, 20 pages contrôlées en accessibilité) ; liens, images et ancres vérifiés.
+
+**Points ouverts**
+- La page d'accueil affiche encore le badge « En cours de développement ».
+- Les quantités au singulier dans les devis de démo (« 3 jour ») viennent des unités saisies dans les données de démo.
+
 ## Prochaine étape
 
-**12e — README portfolio** : présentation du projet (lien vers le site et la démo), captures d'écran, stack et choix techniques (RLS, calculs SQL, fuseau, démo privée), architecture, tests, lancement en local. À présenter en détail avant exécution.
+**12f (optionnelle) — E-mails** : SMTP (Resend) et modèles d'e-mails français, réactivation de la confirmation par e-mail en production ; nécessite un nom de domaine. Sinon, le projet est terminé : publication sur LinkedIn.
