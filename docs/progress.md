@@ -354,7 +354,7 @@
 - Chiffres vérifiés contre le dépôt (393 tests, 38 décisions, 12 migrations, 20 pages contrôlées en accessibilité) ; liens, images et ancres vérifiés.
 
 **Points ouverts**
-- La page d'accueil affiche encore le badge « En cours de développement ».
+- Badge de l'accueil remplacé par « Projet open source · démo en libre accès » (le dépôt GitHub doit être rendu public par l'utilisateur).
 - Les quantités au singulier dans les devis de démo (« 3 jour ») viennent des unités saisies dans les données de démo.
 
 ## Prochaine étape

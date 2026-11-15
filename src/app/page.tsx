@@ -71,7 +71,7 @@ export default function Home() {
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
               <span aria-hidden className="size-1.5 rounded-full bg-primary" />
-              En cours de développement
+              Projet open source · démo en libre accès
             </span>
             <h1 className="mt-6 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
               Toute votre activité, au même endroit.
