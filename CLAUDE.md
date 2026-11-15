@@ -53,6 +53,7 @@ Gestionnaire de paquets : **npm**. N'ajouter aucune dépendance sans justificati
 - Toute modification du schéma passe par une migration SQL versionnée dans `supabase/migrations/`, appliquée d'abord sur dev, puis sur prod. Après une migration plpgsql : `npx supabase db lint --remote --schema private,public`.
 - **Appliquer en prod** (avec le « go » de l'utilisateur) : `npx supabase link --project-ref klcrksxjyhydxtczqquh --yes` → `db push --remote --dry-run` → `db push --remote --yes` → `config diff` relu → `config push --yes` si besoin → contrôles → **toujours** `npx supabase link --project-ref sngvhoygizlvxwwqnsyi --yes` et vérifier que la CLI est revenue sur le dev (`npx supabase projects list`). Réglages propres à la prod : bloc `[remotes.production]` de `supabase/config.toml`.
 - Les secrets (mot de passe BDD, clés, tokens) sont saisis **par l'utilisateur** dans `.env.local` ou via `npx supabase login`. Ils ne transitent jamais par le chat et ne sont jamais committés.
+- **Production en ligne** : https://atelio-inoe.vercel.app (Vercel Hobby, projet `atelio-inoe`, fonctions en région Paris `cdg1`). Chaque `git push` sur `main` redéploie automatiquement. Variables de production saisies par l'utilisateur dans Vercel : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `CRON_SECRET` (propre à la prod), `NEXT_PUBLIC_SITE_URL`. Cron quotidien `/api/cron` à 3 h UTC (`vercel.json`).
 
 ## Conventions
 

@@ -169,8 +169,19 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-141 | Migrations 0001 à 0012 appliquées en prod (aperçu puis application) | ✅ |
 | B-142 | Configuration auth de la prod (`[remotes.production]`, option A sans confirmation e-mail) | ✅ |
 | B-143 | Contrôles réels (RLS sans session, démo, protections) avec la clé publique | ✅ |
-| B-144 | `site_url` / redirections de la prod vers l'URL Vercel | ⏳ 12d |
+| B-144 | `site_url` / redirections de la prod vers l'URL Vercel | ✅ (12d) |
 | B-145 | Confirmation par e-mail en prod (SMTP + domaine) | ⏸️ 12f |
+
+## Phase 12d — Déploiement
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-150 | Région Paris (`cdg1`) et en-têtes de sécurité | ✅ |
+| B-151 | Projet Vercel `atelio-inoe` et variables de production (par l'utilisateur) | ✅ |
+| B-152 | `site_url` / redirections de la prod | ✅ |
+| B-153 | Vérifications en ligne (démo, modules, PDF, en-têtes, cron) | ✅ |
+| B-154 | Test manuel d'inscription en production | ⏳ utilisateur |
+| B-155 | Content-Security-Policy complète (nonces) | ⏸️ V2 |
 
 ## Phases suivantes (à détailler au moment venu)
 

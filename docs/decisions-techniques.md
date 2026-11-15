@@ -331,3 +331,11 @@ _15/11/2026 — validée (option A)_
 - **Configuration** : une seule `supabase/config.toml` ; les réglages propres à la prod passent par `[remotes.production]` (aujourd'hui : rien de plus que la base ; `site_url` en 12d). `config diff` est toujours relu avant `config push`.
 - **Procédure** (consignée dans `CLAUDE.md`) : lier la CLI à la prod uniquement le temps de l'opération (`link` → `db push --dry-run` → `db push` → `config diff` / `config push` → contrôles), puis **toujours** la relier au dev et le vérifier, pour qu'aucune commande habituelle (`db:push`, `db:types`, tests) ne vise la prod.
 - **Contrôles sans secret** : les vérifications sur la prod utilisent la clé publique (récupérée par la CLI dans le script, jamais affichée) ; la clé secrète de la prod n'est utilisée que par l'application déployée (cron), saisie par l'utilisateur dans Vercel.
+
+### DT-038 — Déploiement Vercel : région, en-têtes et variables (phase 12d)
+_15/11/2026 — validée_
+
+- **Hébergement** : Vercel Hobby, projet `atelio-inoe` → https://atelio-inoe.vercel.app ; déploiement automatique à chaque push sur `main`. Les déploiements de prévisualisation n'ont pas de variables (on travaille sur `main`).
+- **Région** : `vercel.json` → `regions: ["cdg1"]` (Paris), la base `atelio-prod` étant à Paris ; par défaut Vercel exécute à Washington (aller-retour transatlantique à chaque requête Supabase).
+- **En-têtes** (`next.config.ts`, toutes les routes) : `X-Frame-Options: DENY` + `Content-Security-Policy: frame-ancestors 'none'` (anti-clickjacking), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (caméra, micro, géolocalisation, paiement coupés), `poweredByHeader: false`. HSTS fourni par Vercel. Pas de CSP complète : sans nonces, elle bloquerait les scripts intégrés de Next (V2).
+- **Variables de production** saisies par l'utilisateur dans Vercel uniquement ; `CRON_SECRET` de la prod différent de celui du dev. Les tests de la route cron avec le secret sont lancés par l'utilisateur depuis son terminal (le secret ne transite pas par le chat).

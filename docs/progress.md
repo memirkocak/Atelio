@@ -14,7 +14,7 @@
 - **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
 - **Phase 10 — Calendrier** : terminée. Rendez-vous (horaire ou journée entière, lieu, client, projet), vues mois et semaine (agenda), échéances des tâches, projets et devis envoyés, filtres par type.
 - **Phase 11 — Statistiques** : terminée. Indicateurs d'une période (CA, taux d'acceptation, panier moyen, devis, projets, tâches, actions) comparés à la période précédente, graphiques, meilleurs clients, état actuel des tâches et projets.
-- **Phase 12 — Finalisation** : en cours. 12a (finitions), 12b (mode démo) et 12c (projet de production `atelio-prod`) terminées ; restent 12d déploiement, 12e README, 12f e-mails (optionnel).
+- **Phase 12 — Finalisation** : en cours. 12a (finitions), 12b (mode démo), 12c (projet de production) et 12d (déploiement : https://atelio-inoe.vercel.app) terminées ; restent 12e README, 12f e-mails (optionnel).
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -327,6 +327,27 @@
 - Une session de démo de contrôle existe en prod : elle sera purgée par le cron (actif après le déploiement 12d).
 - Projet gratuit : mis en pause après 7 jours sans activité tant que le cron n'est pas déployé.
 
+#### Tâche 16 — Déploiement Vercel (phase 12d)
+- Code : `vercel.json` (fonctions en région Paris `cdg1`, au plus près de la base), en-têtes de sécurité dans `next.config.ts` (`X-Frame-Options`, `frame-ancestors 'none'`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, sans `X-Powered-By`) + test E2E. Commit `6dc170b`.
+- Vercel (par l'utilisateur) : projet `atelio-inoe` importé depuis GitHub, variables de production saisies dans Vercel (clés `atelio-prod`, `CRON_SECRET` propre à la prod, `NEXT_PUBLIC_SITE_URL`). Un second projet importé par erreur (`atelio-nine`, en erreur 500 faute de variables) a été supprimé.
+- Supabase prod : `[remotes.production.auth]` (`site_url` et redirections vers `https://atelio-inoe.vercel.app`) ; `config diff` relu (2 écarts attendus) puis `config push` ; CLI reliée au dev ensuite. Commit `27a2a0b`.
+
+**Vérifications (tâche 16)**
+| Vérification | Résultat |
+|---|---|
+| Suite locale avant déploiement | ✅ typecheck, lint, 163 unitaires, build, 101/101 E2E (deux lenteurs sous charge au premier passage, passées à la relance) |
+| Site en ligne | ✅ 200, servi depuis `cdg1` ; HSTS (Vercel) et en-têtes de sécurité présents |
+| Accès | ✅ pages de l'espace redirigées vers `/connexion` sans session |
+| Démo en ligne | ✅ espace « Studio Lumen » rempli, bandeau, tableau de bord, devis, calendrier, statistiques, aucune erreur console |
+| PDF en ligne | ✅ `application/pdf`, signature `%PDF-` |
+| Cron en ligne | ✅ 401 sans secret ; 200 avec le secret (test lancé par l'utilisateur depuis son terminal) |
+| Doublon Vercel | ✅ `atelio-nine` supprimé (404) |
+
+**Points ouverts**
+- Inscription / connexion / suppression d'un vrai compte en production : test manuel confié à l'utilisateur (Claude ne crée pas de compte ni ne saisit de mot de passe sur un site en production).
+- Les sessions de démo de contrôle (12c, 12d) seront purgées par le cron de la nuit.
+- Le menu « Cron Jobs » n'était pas visible dans l'interface Vercel : le cron est déclaré dans `vercel.json` ; son exécution quotidienne sera visible dans les journaux du projet.
+
 ## Prochaine étape
 
-**12d — Déploiement Vercel** : import du dépôt GitHub sur Vercel (par l'utilisateur), variables d'environnement de production (clés `atelio-prod`, `CRON_SECRET`, URL du site) saisies par l'utilisateur dans Vercel, premier déploiement, mise à jour de `site_url` / redirections de la prod, vérification en ligne (inscription, connexion, démo, PDF, cron). À présenter en détail avant exécution.
+**12e — README portfolio** : présentation du projet (lien vers le site et la démo), captures d'écran, stack et choix techniques (RLS, calculs SQL, fuseau, démo privée), architecture, tests, lancement en local. À présenter en détail avant exécution.
