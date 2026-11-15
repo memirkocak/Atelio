@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { DemoBanner } from "@/features/demo/components/demo-banner";
 import { requireUser } from "@/lib/auth/session";
 
 import { getWorkspaceBySlug } from "../queries";
@@ -21,5 +22,10 @@ export async function WorkspaceGate({
   const { slug } = await params;
   const workspace = await getWorkspaceBySlug(slug);
   if (!workspace) notFound();
-  return children;
+  return (
+    <>
+      {workspace.is_demo ? <DemoBanner /> : null}
+      {children}
+    </>
+  );
 }

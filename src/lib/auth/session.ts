@@ -8,6 +8,8 @@ export type CurrentUser = {
   id: string;
   email: string;
   fullName: string | null;
+  /** Session anonyme du mode démo (aucune adresse e-mail ni mot de passe). */
+  isAnonymous: boolean;
 };
 
 /**
@@ -24,7 +26,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   const metadata = (claims.user_metadata ?? {}) as Record<string, unknown>;
   const fullName = typeof metadata.full_name === "string" ? metadata.full_name : null;
 
-  return { id: claims.sub, email: claims.email ?? "", fullName };
+  return { id: claims.sub, email: claims.email ?? "", fullName, isAnonymous: claims.is_anonymous === true };
 }
 
 /** Comme getCurrentUser, mais redirige vers /connexion si personne n'est connecté. */

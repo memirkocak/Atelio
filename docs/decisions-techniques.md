@@ -19,6 +19,7 @@ _13/11/2026 — validée_
 - **Contexte** : projet portfolio ; un projet Supabase gratuit est mis en pause après 7 jours d'inactivité ; un recruteur ne créera pas de compte.
 - **Décision** : cron Vercel quotidien (requête légère + reset démo) ; bouton « Essayer la démo » vers un compte pré-rempli, signalé par un bandeau, réinitialisé chaque nuit.
 - **Conséquences** : script de seed démo et route cron protégée par `CRON_SECRET`. SMTP Resend optionnel au déploiement (le SMTP intégré Supabase est très limité).
+- **Mise à jour (15/11/2026, DT-036)** : le compte partagé réinitialisé chaque nuit est remplacé par un **bac à sable privé par visiteur** (session anonyme, supprimée après 24 h par le cron).
 
 ### DT-003 — TypeScript 6.0.x (pas 7.x)
 _13/11/2026 — validée_
@@ -311,3 +312,13 @@ _15/11/2026 — validée_
 - **Nom affiché** : mis à jour dans les métadonnées du compte (lues dans le jeton par `getClaims`) et dans `profiles` ; le jeton est rafraîchi pour un affichage immédiat. Le changement d'e-mail attend le SMTP (12f).
 - **Accessibilité** : `@axe-core/playwright` 4.14.0 (**dépendance de développement**, version exacte) — règles WCAG 2.1 A / AA sur 15 pages connectées remplies de données et 4 pages publiques. Corrections : graphiques Recharts 3 rendus non focalisables (`accessibilityLayer={false}`, déjà masqués aux lecteurs d'écran qui lisent le résumé `figcaption`), noms accessibles contenant le texte visible (WCAG 2.5.3), liens soulignés dans le texte (1.4.1), lien d'évitement (2.4.1) ciblant `<main>` via `useId()`.
 - Page « Mon compte » hors barre latérale (`accountNavItem`), reconnue par le fil d'Ariane.
+
+### DT-036 — Mode démo : un bac à sable privé par visiteur (phase 12b)
+_15/11/2026 — validée (option B)_
+
+- **Contexte** : un compte de démo partagé expose chaque visiteur aux modifications (voire au contenu déplacé) des autres jusqu'à la réinitialisation nocturne.
+- **Décision** : « Essayer la démo » appelle `signInAnonymously` (connexion anonyme Supabase activée). Le trigger de création de compte (`private.handle_new_user`) crée l'espace puis, pour un compte **anonyme**, appelle `private.seed_demo_workspace` : espace « Studio Lumen (démo) » marqué `is_demo`, données fictives **relatives à la date du jour** (tableau de bord, calendrier et statistiques toujours remplis), devis calculés par `private.quote_line_amounts` et numérotés par `private.next_quote_number`, instantanés figés pour les devis envoyés, historique d'activité plausible (horodaté dans le passé). Données manifestement fictives : domaines `.example`, pas de SIRET ni de n° de TVA.
+- **Aucune clé secrète** dans ce parcours : tout se passe dans la transaction de création du compte. Limite de Supabase : 30 sessions anonymes par heure et par adresse IP.
+- **Purge** : `public.purge_demo_accounts(âge)`, SECURITY DEFINER exécutable par `service_role` uniquement, supprime les espaces `is_demo` puis les comptes anonymes plus anciens que l'âge (24 h). Appelée par `GET /api/cron` (seul usage de la clé secrète hors scripts : tâche d'administration jamais déclenchée par un utilisateur), protégée par `Authorization: Bearer CRON_SECRET` (comparaison à temps constant d'empreintes SHA-256, secret ≥ 32 caractères). `vercel.json` : tous les jours à 3 h UTC (limite du plan Hobby). La requête maintient aussi le projet Supabase actif.
+- **Protections** : suppression de compte refusée (`AT010`), changement de mot de passe refusé côté serveur, `is_demo` non modifiable (droits par colonne), nom de l'espace conservé. Bandeau **collant** sous la barre du haut (« Mode démo — données fictives… », bouton « Créer un compte » qui ferme la session). Une personne déjà connectée qui clique sur la démo est renvoyée vers son espace.
+- **Correctif** : la 0011 contenait un `null` non typé (42804) qui faisait échouer la création de session ; corrigé par la 0012 (la 0011 appliquée n'est pas réécrite). `supabase db lint --remote` sert désormais de contrôle après chaque migration plpgsql.

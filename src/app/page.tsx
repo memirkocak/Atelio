@@ -12,6 +12,7 @@ import Link from "next/link";
 
 import { Brand } from "@/components/layout/brand";
 import { Button } from "@/components/ui/button";
+import { DemoButton } from "@/features/demo/components/demo-button";
 
 // Version simple (phases 2-3). Version finale avec captures et accès démo en phase 12.
 
@@ -86,10 +87,11 @@ export default function Home() {
                   <ArrowRight aria-hidden />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/connexion">Se connecter</Link>
-              </Button>
+              <DemoButton />
             </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              La démo ouvre un espace privé déjà rempli de données fictives, sans inscription.
+            </p>
           </div>
         </section>
 

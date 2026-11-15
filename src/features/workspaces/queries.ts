@@ -11,6 +11,8 @@ export type WorkspaceSummary = {
   id: string;
   name: string;
   slug: string;
+  /** Espace de démonstration (session anonyme, supprimé après 24 h). */
+  is_demo: boolean;
 };
 
 /**
@@ -22,7 +24,7 @@ export const getWorkspaceBySlug = cache(async (slug: string): Promise<WorkspaceS
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("workspaces")
-    .select("id, name, slug")
+    .select("id, name, slug, is_demo")
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
@@ -74,7 +76,7 @@ export async function getDefaultWorkspace(
   const supabase = client ?? (await createClient());
   const { data, error } = await supabase
     .from("workspace_members")
-    .select("role, created_at, workspaces(id, name, slug)")
+    .select("role, created_at, workspaces(id, name, slug, is_demo)")
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
   if (error) throw error;

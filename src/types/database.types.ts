@@ -653,6 +653,7 @@ export type Database = {
         Args: { p_from: string; p_to: string; p_workspace_id: string }
         Returns: Json
       }
+      purge_demo_accounts: { Args: { p_max_age?: string }; Returns: number }
       save_quote: {
         Args: {
           p_items: Json

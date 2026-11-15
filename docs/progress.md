@@ -14,7 +14,7 @@
 - **Phase 9 — Tableau de bord** : terminée. 6 indicateurs réels reliés aux listes filtrées, CA accepté par mois et tâches terminées par semaine (Recharts), activité récente de l'espace.
 - **Phase 10 — Calendrier** : terminée. Rendez-vous (horaire ou journée entière, lieu, client, projet), vues mois et semaine (agenda), échéances des tâches, projets et devis envoyés, filtres par type.
 - **Phase 11 — Statistiques** : terminée. Indicateurs d'une période (CA, taux d'acceptation, panier moyen, devis, projets, tâches, actions) comparés à la période précédente, graphiques, meilleurs clients, état actuel des tâches et projets.
-- **Phase 12 — Finalisation** : en cours. 12a (finitions : Mon compte, suppression de compte, accessibilité, mobile) terminée ; restent 12b mode démo, 12c projet de production, 12d déploiement, 12e README, 12f e-mails (optionnel).
+- **Phase 12 — Finalisation** : en cours. 12a (finitions) et 12b (mode démo : bac à sable privé par visiteur) terminées ; restent 12c projet de production, 12d déploiement, 12e README, 12f e-mails (optionnel).
 - Base de dev : un seul compte, celui de l'utilisateur (avec ses propres données) ; aucun compte de test restant.
 - GitHub : `memirkocak/Atelio`, push à la fin de chaque phase.
 
@@ -282,6 +282,28 @@
 - Changement d'adresse e-mail : nécessite l'envoi d'e-mails (SMTP, 12f).
 - Les tests E2E qui dépendent de « aujourd'hui » peuvent échouer s'ils s'exécutent à cheval sur minuit (heure de Paris) — sans incidence sur l'application.
 
+#### Tâche 14 — Mode démo (phase 12b)
+- Choix validé : **bac à sable par visiteur** (option B) plutôt qu'un compte partagé : « Essayer la démo » ouvre une session anonyme Supabase avec son propre espace pré-rempli, supprimé après 24 h.
+- Configuration : connexion anonyme activée sur le projet de dev (`config diff` relu : un seul changement, puis `config push`).
+- Migration 0011 : `private.seed_demo_workspace` (Studio Lumen fictif : 8 clients, 7 projets, 22 tâches, 14 devis sur 12 mois, 8 rendez-vous, historique ; dates relatives à aujourd'hui ; montants via `private.quote_line_amounts` ; domaines `.example`, aucun SIRET), déclenchée par la création d'un compte anonyme ; `public.purge_demo_accounts(âge)` réservée à `service_role`.
+- Migration 0012 (correctif) : `null` non typé dans le journal (42804) qui faisait échouer la création de session ; trouvé avec `supabase db lint`. La 0011 déjà appliquée n'a pas été modifiée.
+- Application : bouton « Essayer la démo » (accueil et connexion), bandeau permanent collant « Mode démo » avec « Créer un compte », menu « Session de démonstration », page Mon compte sans mot de passe ni suppression (actions refusées aussi côté serveur), nom de l'espace de démo non modifiable.
+- Route `/api/cron` (GET, `Authorization: Bearer CRON_SECRET`, comparaison à temps constant) : purge des démos de plus de 24 h ; `vercel.json` (tous les jours à 3 h UTC) ; `CRON_SECRET` ajouté à `.env.example`.
+- Aucune nouvelle dépendance. Décision DT-036 (DT-002 mise à jour).
+
+**Vérifications (tâche 14)**
+| Vérification | Résultat |
+|---|---|
+| `npm run typecheck` / `lint` / `build` | ✅ |
+| `npm test` | ✅ 163/163 (dont 3 autorisation cron) |
+| `npm run test:rls` | ✅ 129/129 (dont 10 démo : remplissage, cohérence des montants au centime, tableau de bord, isolation entre visiteurs, compte réel non touché, suppression et sortie du mode démo refusées, purge réservée au serveur et ciblée) |
+| `npm run test:e2e` | ✅ 98/98 sur la suite complète ; démo relancée après le bandeau collant : 8/8 dont accessibilité ; route cron avec `CRON_SECRET` (ajouté par l'utilisateur dans `.env.local`) : 401 sans secret ou avec un mauvais secret, 200 avec le bon |
+| Navigateur | ✅ accueil → démo en un clic, tableau de bord rempli, bandeau visible au défilement, aucune erreur console ; sessions de démo supprimées |
+
+**Points ouverts**
+- Le cron n'est actif qu'une fois déployé sur Vercel (12d) ; d'ici là, les sessions de démo locales ne sont pas purgées automatiquement.
+- `db lint` signale deux variables inutilisées dans `seed_demo_workspace` (sans effet).
+
 ## Prochaine étape
 
-**12b — Mode démo** : compte de démonstration pré-rempli (données réalistes sur plusieurs mois), bouton « Essayer la démo » sur l'accueil, bandeau « Mode démo », protections (pas de suppression de compte ni de changement de mot de passe), réinitialisation nocturne (Route Handler protégé par secret, appelé par le cron Vercel). À présenter en détail avant exécution.
+**12c — Projet de production** : création par l'utilisateur du projet Supabase `atelio-prod` (région Paris), liaison, application des migrations 0001 à 0012, configuration de l'authentification (confirmation par e-mail, connexion anonyme, URL du site), vérifications. À présenter en détail avant exécution.

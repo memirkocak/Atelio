@@ -30,6 +30,17 @@ async function AccountSection({ params }: { params: Promise<{ slug: string }> })
   const [user, workspace] = await Promise.all([requireUser(), getWorkspaceBySlug(slug)]);
   if (!workspace) notFound();
 
+  if (user.isAnonymous) {
+    return (
+      <Panel title="Session de démonstration">
+        <p className="text-muted-foreground">
+          Vous explorez Atelio avec un compte de démonstration temporaire : il n’a ni adresse e-mail ni mot de passe,
+          et il est supprimé automatiquement avec ses données sous 24 h. Créez un compte pour conserver vos données.
+        </p>
+      </Panel>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <Panel title="Profil">

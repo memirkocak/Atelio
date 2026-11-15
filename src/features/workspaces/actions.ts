@@ -23,7 +23,8 @@ export async function updateWorkspaceSettingsAction(slug: string, input: unknown
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("workspaces")
-    .update(toSettingsRow(parsed.data))
+    // Espace de démonstration : le nom reste « Studio Lumen (démo) »
+    .update(workspace.is_demo ? { ...toSettingsRow(parsed.data), name: workspace.name } : toSettingsRow(parsed.data))
     .eq("id", workspace.id)
     .select("id")
     .maybeSingle();

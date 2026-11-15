@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { AuthCard } from "@/features/auth/components/auth-card";
 import { SignInForm } from "@/features/auth/components/sign-in-form";
+import { DemoButton } from "@/features/demo/components/demo-button";
 
 export const metadata: Metadata = { title: "Connexion" };
 
@@ -25,6 +26,12 @@ export default function SignInPage() {
       <Suspense>
         <SignInForm />
       </Suspense>
+      <div className="mt-6 flex items-center gap-3 text-xs text-muted-foreground" aria-hidden>
+        <span className="h-px flex-1 bg-border" />
+        ou
+        <span className="h-px flex-1 bg-border" />
+      </div>
+      <DemoButton className="mt-6 [&_button]:w-full" size="default" variant="outline" />
     </AuthCard>
   );
 }

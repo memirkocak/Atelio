@@ -14,6 +14,7 @@ import { changePasswordSchema, deleteAccountSchema, profileSchema } from "./sche
 const INVALID_FORM = "Certains champs sont invalides.";
 const SESSION_EXPIRED = "Votre session a expiré. Reconnectez-vous.";
 const GENERIC_ERROR = "Une erreur est survenue. Réessayez dans un instant.";
+const DEMO_FORBIDDEN = "Indisponible en mode démo : créez un compte pour gérer votre mot de passe.";
 
 function fieldErrors(error: z.ZodError) {
   return z.flattenError(error).fieldErrors as Record<string, string[]>;
@@ -24,7 +25,7 @@ async function sessionUser() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
-  return { supabase, id: claims?.sub ?? null, email: claims?.email ?? null };
+  return { supabase, id: claims?.sub ?? null, email: claims?.email ?? null, isAnonymous: claims?.is_anonymous === true };
 }
 
 function passwordFailure(check: Exclude<PasswordCheck, "ok">, field: string) {
@@ -57,7 +58,8 @@ export async function changePasswordAction(input: unknown): Promise<ActionResult
   const parsed = changePasswordSchema.safeParse(input);
   if (!parsed.success) return fail(INVALID_FORM, fieldErrors(parsed.error));
 
-  const { supabase, id, email } = await sessionUser();
+  const { supabase, id, email, isAnonymous } = await sessionUser();
+  if (isAnonymous) return fail(DEMO_FORBIDDEN);
   if (!id || !email) return fail(SESSION_EXPIRED);
 
   const check = await verifyPassword(email, parsed.data.currentPassword);
@@ -73,7 +75,8 @@ export async function deleteAccountAction(input: unknown): Promise<ActionResult>
   const parsed = deleteAccountSchema.safeParse(input);
   if (!parsed.success) return fail(INVALID_FORM, fieldErrors(parsed.error));
 
-  const { supabase, id, email } = await sessionUser();
+  const { supabase, id, email, isAnonymous } = await sessionUser();
+  if (isAnonymous) return fail(DEMO_FORBIDDEN);
   if (!id || !email) return fail(SESSION_EXPIRED);
 
   const check = await verifyPassword(email, parsed.data.password);

@@ -151,6 +151,16 @@ Statuts : ✅ fait · 🟡 en cours · ⚪ à faire · ⏸️ en attente (action
 | B-124 | Tests : 6 unitaires, 4 RLS, 6 E2E compte + 19 accessibilité | ✅ |
 | B-125 | Changement d'adresse e-mail | ⏸️ après SMTP (12f) |
 
+## Phase 12b — Mode démo
+
+| ID | Tâche | Statut |
+|---|---|---|
+| B-130 | Connexion anonyme (config) et espace de démo rempli à la création (migrations 0011, 0012) | ✅ |
+| B-131 | Bouton « Essayer la démo », bandeau permanent, protections du compte de démo | ✅ |
+| B-132 | Route `/api/cron` (purge 24 h, maintien actif) et `vercel.json` | ✅ |
+| B-133 | Tests : 3 unitaires, 10 RLS, 8 E2E | ✅ |
+| B-134 | Conversion d'une session de démo en vrai compte (conserver les données) | ⏸️ V2 |
+
 ## Phases suivantes (à détailler au moment venu)
 
 - Phase 12 — Finalisation : paramètres, mode démo (seed, bandeau, reset nocturne), cron keep-alive, SMTP Resend (optionnel), déploiement Vercel, README portfolio

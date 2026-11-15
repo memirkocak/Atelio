@@ -8,5 +8,6 @@ import { UserMenuDropdown } from "./user-menu-dropdown";
  */
 export async function UserMenu() {
   const user = await requireUser();
+  if (user.isAnonymous) return <UserMenuDropdown name="Visiteur" email="Session de démonstration" />;
   return <UserMenuDropdown name={user.fullName ?? user.email} email={user.email} />;
 }
